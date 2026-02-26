@@ -1,0 +1,14 @@
+name: Daily AI News Fetch
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # 8 AM Daily
+  workflow_dispatch:
+
+jobs:
+  fetch-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch News API
+        run: |
+          curl -X GET "${{ secrets.SITE_URL }}/api/fetch-news"
