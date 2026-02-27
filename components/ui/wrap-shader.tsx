@@ -2,9 +2,22 @@
 
 import { Warp } from "@paper-design/shaders-react"
 
-export default function WarpShaderHero() {
-  const scrollToUpdates = () => {
-    document.getElementById('updates')?.scrollIntoView({ behavior: 'smooth' });
+interface WarpShaderHeroProps {
+  onModeChange?: (mode: 'updates' | 'startups') => void;
+  activeMode?: 'updates' | 'startups';
+}
+
+export default function WarpShaderHero({ onModeChange, activeMode = 'updates' }: WarpShaderHeroProps) {
+  const scrollToContent = () => {
+    document.getElementById('content-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleModeClick = (mode: 'updates' | 'startups') => {
+    if (onModeChange) {
+      onModeChange(mode);
+      // Small delay to ensure state updates before scrolling
+      setTimeout(scrollToContent, 100);
+    }
   };
 
   return (
@@ -40,20 +53,31 @@ export default function WarpShaderHero() {
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-6">
             <button 
-              onClick={scrollToUpdates}
-              className="group px-10 py-5 bg-white/40 backdrop-blur-md border border-white/50 rounded-full text-slate-800 font-medium hover:bg-white/60 transition-all duration-500 hover:scale-105 active:scale-95 shadow-xl shadow-slate-200/50"
+              onClick={() => handleModeClick('updates')}
+              className={`group px-10 py-5 rounded-full font-medium transition-all duration-500 hover:scale-105 active:scale-95 shadow-xl ${
+                activeMode === 'updates'
+                  ? 'bg-slate-900 text-white shadow-slate-900/20'
+                  : 'bg-white/40 backdrop-blur-md border border-white/50 text-slate-800 hover:bg-white/60 shadow-slate-200/50'
+              }`}
             >
               Explore Updates
-              <span className="inline-block ml-2 transition-transform group-hover:translate-y-1">↓</span>
+              <span className={`inline-block ml-2 transition-transform ${activeMode === 'updates' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
             </button>
             <button 
-              className="px-10 py-5 bg-slate-900 rounded-full text-white font-medium hover:bg-slate-800 transition-all duration-500 hover:scale-105 active:scale-95 shadow-2xl shadow-slate-900/20"
+              onClick={() => handleModeClick('startups')}
+              className={`group px-10 py-5 rounded-full font-medium transition-all duration-500 hover:scale-105 active:scale-95 shadow-xl ${
+                activeMode === 'startups'
+                  ? 'bg-slate-900 text-white shadow-slate-900/20'
+                  : 'bg-white/40 backdrop-blur-md border border-white/50 text-slate-800 hover:bg-white/60 shadow-slate-200/50'
+              }`}
             >
-              Submit Tool
+              Explore Startups
+              <span className={`inline-block ml-2 transition-transform ${activeMode === 'startups' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
             </button>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
+

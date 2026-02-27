@@ -50,10 +50,6 @@ export const Navbar = () => {
         </Link>
         
         <div className="flex items-center gap-6">
-          <Link href="/startups" className="hidden lg:flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-teal-600 transition-colors">
-            <Rocket className="w-3 h-3" /> Explore Startups
-          </Link>
-          
           {lastSync && (
             <div className="hidden md:flex items-center gap-2 text-slate-400">
               <Clock className="w-3 h-3" />

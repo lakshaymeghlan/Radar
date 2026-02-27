@@ -1,17 +1,20 @@
 import { Navbar } from '@/components/navbar';
-import WarpShaderHero from '@/components/ui/wrap-shader';
-import { NewsFeed, NewsItem } from '@/components/news-feed';
+import { ContentExplorer, NewsItem, StartupItem } from '@/components/content-explorer';
 import { getDb } from '@/lib/mongodb';
-import { ArrowDown, Cpu, Sparkles, Globe } from 'lucide-react';
+import { Cpu, Sparkles, Globe } from 'lucide-react';
 import Link from 'next/link';
 
 async function getNews(): Promise<NewsItem[]> {
   try {
     const db = await getDb();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
     const news = await db.collection('news')
-      .find({})
+      .find({
+        date: { $gte: sevenDaysAgo }
+      })
       .sort({ date: -1 })
-      .limit(100)
       .toArray();
     
     return news.map(item => ({
@@ -28,24 +31,44 @@ async function getNews(): Promise<NewsItem[]> {
   }
 }
 
+async function getStartups(): Promise<StartupItem[]> {
+  try {
+    const db = await getDb();
+    const twoYearsAgo = new Date();
+    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+    
+    const startups = await db.collection('startups')
+      .find({
+        date: { $gte: twoYearsAgo }
+      })
+      .sort({ date: -1 })
+      .toArray();
+    
+    return startups.map(item => ({
+      _id: item._id.toString(),
+      name: item.name || '',
+      description: item.description || '',
+      link: item.link || '',
+      source: item.source || '',
+      tags: item.tags || [],
+      date: item.date instanceof Date ? item.date.toISOString() : new Date(item.date).toISOString(),
+    }));
+  } catch (error) {
+    console.error('Failed to fetch startups:', error);
+    return [];
+  }
+}
+
 export default async function Home() {
   const news = await getNews();
+  const startups = await getStartups();
 
   return (
     <main className="min-h-screen bg-white selection:bg-teal-100 selection:text-teal-900">
       <Navbar />
       
-      {/* Hero Section */}
-      <WarpShaderHero />
+      <ContentExplorer initialNews={news} initialStartups={startups} />
 
-      {/* Glass Divider */}
-      <div className="flex justify-center -mt-20 mb-20 relative z-20">
-        <div className="bg-white/80 backdrop-blur-xl p-6 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/50 animate-bounce cursor-pointer hover:scale-110 transition-transform duration-500">
-          <ArrowDown className="w-6 h-6 text-teal-600" />
-        </div>
-      </div>
-
-      <NewsFeed initialNews={news} />
 
       {/* Premium Stats/About Section */}
       <section className="max-w-7xl mx-auto px-6 py-32 border-t border-slate-50">
@@ -86,9 +109,6 @@ export default async function Home() {
             <div className="flex gap-12 text-[11px] text-slate-400 uppercase tracking-[0.3em] font-black items-center">
               <a href="#" className="hover:text-teal-600 transition-colors">Twitter</a>
               <a href="#" className="hover:text-teal-600 transition-colors">Newsletter</a>
-              <Link href="/startups" className="px-5 py-2 bg-slate-900 text-white rounded-full hover:bg-teal-600 transition-all duration-500 shadow-lg shadow-slate-200">
-                Explore Startups
-              </Link>
             </div>
 
             <div className="pt-12 border-t border-slate-200 w-full max-w-lg">

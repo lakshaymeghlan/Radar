@@ -49,7 +49,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
           rel="noopener noreferrer"
           className="w-full flex items-center justify-between text-slate-800 text-[11px] font-bold tracking-widest uppercase py-4 px-6 bg-slate-50 rounded-2xl group-hover:bg-teal-600 group-hover:text-white transition-all duration-700"
         >
-          Explore Intelligence
+          Read More
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
         </Link>
       </CardFooter>
