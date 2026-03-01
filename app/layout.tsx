@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: "A clean, editorial-style radar platform for daily AI tools and structured news updates.",
 };
 
+import { ThemeProvider } from "@/components/theme-provider";
 import AiAssistant from "@/components/ai-assistant";
 
 export default function RootLayout({
@@ -25,12 +26,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <AiAssistant />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <AiAssistant />
+        </ThemeProvider>
       </body>
     </html>
   );

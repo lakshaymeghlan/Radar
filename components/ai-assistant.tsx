@@ -85,24 +85,24 @@ export default function AiAssistant() {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
       {/* 1. CHAT WINDOW - MATCHING LIGHT/TEAL THEME */}
       {isOpen && (
-        <div className="mb-4 flex h-[550px] w-[350px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] backdrop-blur-xl transition-all duration-300 sm:w-[400px]">
+        <div className="mb-4 flex h-[550px] w-[350px] flex-col overflow-hidden rounded-3xl border border-border bg-background shadow-2xl backdrop-blur-xl transition-all duration-300 sm:w-[400px] animate-in fade-in slide-in-from-bottom-4">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-100 bg-white p-5">
+          <div className="flex items-center justify-between border-b border-border bg-background/50 p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 shadow-lg shadow-slate-200">
-                <RadarLogo className="h-6 w-6" color="white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground shadow-lg">
+                <RadarLogo className="h-6 w-6" color="var(--background)" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900 tracking-tight">Radar Search</h3>
+                <h3 className="text-sm font-bold text-foreground tracking-tight uppercase">Radar Search</h3>
                 <div className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Registry Online</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Registry Online</span>
                 </div>
               </div>
             </div>
             <button 
               onClick={() => setIsOpen(false)}
-              className="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-900"
+              className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               <X className="h-4.5 w-4.5" />
             </button>
@@ -111,7 +111,7 @@ export default function AiAssistant() {
           {/* Messages Area */}
           <div 
             ref={scrollRef}
-            className="flex-1 space-y-6 overflow-y-auto bg-slate-50/50 p-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-200"
+            className="flex-1 space-y-6 overflow-y-auto bg-secondary/30 p-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border"
           >
             {messages.map((msg, idx) => (
               <div 
@@ -121,8 +121,8 @@ export default function AiAssistant() {
                 <div 
                   className={`max-w-[85%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed shadow-sm ${
                     msg.role === 'user' 
-                      ? 'bg-slate-900 text-white font-medium' 
-                      : 'bg-white text-slate-700 border border-slate-100'
+                      ? 'bg-foreground text-background font-medium' 
+                      : 'bg-card text-foreground border border-border/50'
                   }`}
                 >
                   {msg.content}
@@ -137,18 +137,18 @@ export default function AiAssistant() {
                         href={res.link} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="group flex flex-col gap-1.5 rounded-2xl border border-slate-100 bg-white p-4 transition-all hover:border-emerald-200 hover:shadow-md hover:translate-y-[-2px]"
+                        className="group flex flex-col gap-1.5 rounded-2xl border border-border/50 bg-card p-4 transition-all hover:border-emerald-500/50 hover:shadow-md hover:translate-y-[-2px]"
                       >
                         <div className="flex items-center justify-between">
                           <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${res.type === 'news' ? 'text-blue-500' : 'text-emerald-500'}`}>
                             {res.type}
                           </span>
-                          <div className="rounded-full bg-slate-50 p-1 group-hover:bg-emerald-50">
-                            <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-emerald-500" />
+                          <div className="rounded-full bg-secondary p-1 group-hover:bg-emerald-500/10">
+                            <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-emerald-500" />
                           </div>
                         </div>
-                        <h4 className="line-clamp-1 text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">{res.title}</h4>
-                        <p className="line-clamp-2 text-[11px] text-slate-500 line-height-relaxed">{res.content}</p>
+                        <h4 className="line-clamp-1 text-sm font-bold text-foreground group-hover:text-emerald-500 transition-colors uppercase tracking-tight">{res.title}</h4>
+                        <p className="line-clamp-2 text-[11px] text-muted-foreground line-height-relaxed italic">{res.content}</p>
                       </a>
                     ))}
                   </div>
@@ -168,7 +168,7 @@ export default function AiAssistant() {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-slate-100 bg-white p-5">
+          <div className="border-t border-border bg-background p-5">
             <div className="relative flex items-center">
               <input
                 type="text"
@@ -176,15 +176,15 @@ export default function AiAssistant() {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask about AI startups or news..."
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 pr-14 text-sm text-slate-900 placeholder-slate-400 transition-all focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                className="w-full rounded-2xl border border-border bg-secondary px-5 py-3 pr-14 text-sm text-foreground placeholder-muted-foreground transition-all focus:bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               />
               <button 
                 onClick={handleSend}
                 disabled={!query.trim() || isLoading}
                 className={`absolute right-2 flex h-10 w-10 items-center justify-center rounded-xl transition-all ${
                   query.trim() && !isLoading 
-                    ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-md translate-x-0' 
-                    : 'bg-slate-100 text-slate-300'
+                    ? 'bg-foreground text-background hover:opacity-90 shadow-md translate-x-0' 
+                    : 'bg-muted text-muted-foreground'
                 }`}
               >
                 <Send className="h-4.5 w-4.5" />

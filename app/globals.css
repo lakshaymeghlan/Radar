@@ -67,19 +67,29 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+}
+
+/* PHANTOM EMERALD DARK MODE - HIGH CONTRAST TECH THEME */
+.dark {
+  --background: #020617; /* Deepest Navy/Black */
+  --foreground: #ffffff; /* Pure White */
+  --card: rgba(15, 23, 42, 0.6);
+  --card-foreground: #ffffff;
+  --popover: #020617;
+  --popover-foreground: #ffffff;
+  --primary: #10b981; /* Vibrant Emerald */
+  --primary-foreground: #020617;
+  --secondary: #1e293b;
+  --secondary-foreground: #ffffff;
+  --muted: #0f172a;
+  --muted-foreground: #94a3b8;
+  --accent: rgba(16, 185, 129, 0.15);
+  --accent-foreground: #10b981;
+  --destructive: #ef4444;
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #10b981;
 }
 
 @layer base {
@@ -87,11 +97,22 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-slate-50/30 text-slate-900 antialiased font-sans;
+    @apply bg-background text-foreground antialiased font-sans transition-colors duration-700;
   }
+}
+
+/* PREMIUM UI POLISH */
+.dark .text-glow {
+  text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+}
+
+.dark .card-glow {
+  box-shadow: 0 0 50px -12px rgba(16, 185, 129, 0.15);
 }
 
 @layer utilities {
   .text-teal-600 { color: #0d9488; }
   .text-teal-700 { color: #0f766e; }
+  .dark .text-teal-600 { color: oklch(0.7 0.1 185); }
+  .dark .text-teal-700 { color: oklch(0.75 0.12 185); }
 }
