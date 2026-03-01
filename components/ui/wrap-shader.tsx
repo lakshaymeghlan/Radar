@@ -29,7 +29,7 @@ export default function WarpShaderHero({ onModeChange, activeMode = 'updates' }:
   // RADAR VOID COLORS - Gray/White on Black for Dark Mode
   const colors = mounted && resolvedTheme === 'dark' 
     ? ["#020617", "#1e293b", "#334155", "#020617"]
-    : ["#f8fdfc", "#79d8cdff", "#ccfbf1", "#f0fdfa"];
+    : ["#f8fdfc", "#86ddd3ff", "#ccfbf1", "#f0fdfa"];
 
   return (
     <div className="relative min-h-[90vh] w-full overflow-hidden transition-colors duration-700 bg-background">
@@ -58,34 +58,41 @@ export default function WarpShaderHero({ onModeChange, activeMode = 'updates' }:
             <h1 className="text-foreground dark:text-white text-6xl md:text-9xl font-sans font-light tracking-tighter text-balance leading-none animate-in fade-in slide-in-from-top-4 duration-1000 dark:text-glow">
               AI Launch Radar
             </h1>
-            <p className="text-muted-foreground dark:text-gray-300 text-xl md:text-2xl font-sans font-light leading-relaxed max-w-2xl mx-auto tracking-tight">
-              Daily AI tools and updates. <br className="hidden md:block" />
-              Clear. Structured. <span className="text-primary dark:text-emerald-400 font-medium font-serif italic dark:text-glow">Noise-free signal</span> for the AI era.
+            <p className="text-muted-foreground dark:text-gray-300 text-xl md:text-2xl font-sans font-light leading-relaxed max-w-3xl mx-auto tracking-tight">
+              Tracking the frontier of <span className="text-slate-900 dark:text-white font-medium">Artificial Intelligence</span> and <span className="text-slate-900 dark:text-white font-medium">Startup launches</span>. <br className="hidden md:block" />
+              Clear. Structured. <span className="text-primary dark:text-emerald-400 font-medium font-serif italic dark:text-glow">High-signal intelligence</span> for the next era.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center pt-8">
             <button 
               onClick={() => handleModeClick('updates')}
-              className={`group px-12 py-6 rounded-full font-bold uppercase tracking-widest text-[11px] transition-all duration-500 hover:scale-105 active:scale-95 shadow-2xl ${
+              className={`group relative overflow-hidden px-12 py-6 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all duration-500 hover:scale-105 active:scale-95 shadow-2xl ${
                 activeMode === 'updates'
-                  ? 'bg-primary text-primary-foreground shadow-primary/20'
-                  : 'bg-background/40 dark:bg-slate-900/60 backdrop-blur-xl border border-border text-foreground hover:bg-background/80 shadow-black/10'
+                  ? 'bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 shadow-slate-900/20 dark:shadow-emerald-500/40'
+                  : 'bg-white/40 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-emerald-500/20 text-slate-900 dark:text-white hover:bg-white/60 dark:hover:bg-slate-800/80 shadow-black/5'
               }`}
             >
-              Explore Updates
-              <span className={`inline-block ml-3 transition-transform ${activeMode === 'updates' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <span className="relative flex items-center justify-center gap-3 font-semibold">
+                Explore AI Updates
+                <span className={`transition-transform duration-500 ${activeMode === 'updates' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
+              </span>
             </button>
+
             <button 
               onClick={() => handleModeClick('startups')}
-              className={`group px-10 py-5 rounded-full font-bold uppercase tracking-widest text-[11px] transition-all duration-500 hover:scale-105 active:scale-95 shadow-xl ${
+              className={`group relative overflow-hidden px-12 py-6 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all duration-500 hover:scale-105 active:scale-95 shadow-2xl ${
                 activeMode === 'startups'
-                  ? 'bg-foreground text-background shadow-foreground/10'
-                  : 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-foreground/10 text-foreground hover:bg-white/60 shadow-slate-200/20'
+                  ? 'bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 shadow-slate-900/20 dark:shadow-emerald-500/40'
+                  : 'bg-white/40 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-emerald-500/20 text-slate-900 dark:text-white hover:bg-white/60 dark:hover:bg-slate-800/80 shadow-black/5'
               }`}
             >
-              Explore Startups
-              <span className={`inline-block ml-2 transition-transform ${activeMode === 'startups' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <span className="relative flex items-center justify-center gap-3 font-semibold">
+                Explore Startups
+                <span className={`transition-transform duration-500 ${activeMode === 'startups' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
+              </span>
             </button>
           </div>
         </div>
