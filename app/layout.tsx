@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "A clean, editorial-style radar platform for daily AI tools and structured news updates.",
 };
 
+import AiAssistant from "@/components/ai-assistant";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,6 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <AiAssistant />
       </body>
     </html>
   );

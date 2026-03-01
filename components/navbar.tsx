@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import { RefreshCw, Check, Clock, Rocket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { RadarLogo } from './ui/radar-logo';
+
 export const Navbar = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isDone, setIsDone] = useState(false);
@@ -41,8 +43,8 @@ export const Navbar = () => {
     <nav className="fixed top-0 z-[100] w-full px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-3 rounded-full bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)]">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform duration-500">
-            R
+          <div className="w-9 h-9 rounded-lg bg-slate-900 flex items-center justify-center text-white p-1.5 group-hover:scale-110 transition-transform duration-500">
+            <RadarLogo className="w-full h-full" color="white" />
           </div>
           <span className="text-xl font-bold tracking-tighter text-slate-900">
             Radar
