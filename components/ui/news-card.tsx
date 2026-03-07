@@ -1,23 +1,29 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 interface NewsCardProps {
+  id: string;
   toolName: string;
   company: string;
   summary: string;
   link: string;
   date: Date;
+  hasComments?: boolean;
+  onCommentClick: (id: string, title: string) => void;
 }
 
 export const NewsCard: React.FC<NewsCardProps> = ({
+  id,
   toolName,
   company,
   summary,
   link,
   date,
+  hasComments,
+  onCommentClick,
 }) => {
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -31,7 +37,25 @@ export const NewsCard: React.FC<NewsCardProps> = ({
           <Badge className="bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-100 dark:border-slate-800 font-black text-[9px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full group-hover:bg-teal-50 dark:group-hover:bg-emerald-500/10 group-hover:text-teal-600 dark:group-hover:text-emerald-400 transition-colors duration-500">
             {company}
           </Badge>
-          <span className="text-[10px] text-slate-300 dark:text-slate-600 font-bold uppercase tracking-widest">{formattedDate}</span>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={(e) => {
+                e.preventDefault();
+                onCommentClick(id, toolName);
+              }}
+              className={`relative p-2 rounded-full transition-all duration-500 ${
+                hasComments 
+                  ? 'text-teal-500 dark:text-emerald-400 bg-teal-50 dark:bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.3)] animate-pulse' 
+                  : 'text-slate-300 dark:text-slate-600 hover:text-teal-500 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'
+              }`}
+            >
+              <MessageSquare className="w-4 h-4" />
+              {hasComments && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-teal-500 dark:bg-emerald-400 rounded-full border-2 border-white dark:border-slate-950" />
+              )}
+            </button>
+            <span className="text-[10px] text-slate-300 dark:text-slate-600 font-bold uppercase tracking-widest">{formattedDate}</span>
+          </div>
         </div>
         <CardTitle className="text-2xl font-light text-slate-900 dark:text-white tracking-tight leading-[1.25] group-hover:text-teal-700 dark:group-hover:text-emerald-400 transition-colors duration-500">
           {toolName}

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { NewsCard } from '@/components/ui/news-card';
 import { Sparkles, LayoutGrid, Plus, Cpu, Code2, Rocket } from 'lucide-react';
+import { CommentModal } from './comment-modal';
 
 export interface NewsItem {
   _id: string;
@@ -33,6 +34,8 @@ const CATEGORIES = [
 export function NewsFeed({ initialNews }: NewsFeedProps) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [displayCount, setDisplayCount] = useState(20);
+  const [selectedItem, setSelectedItem] = useState<{ id: string; title: string } | null>(null);
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
 
   const filteredNews = useMemo(() => {
     let news = initialNews;
@@ -53,8 +56,32 @@ export function NewsFeed({ initialNews }: NewsFeedProps) {
     return filteredNews.slice(0, displayCount);
   }, [filteredNews, displayCount]);
 
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const ids = displayedNews.map(item => item._id);
+      if (ids.length === 0) return;
+
+      try {
+        const res = await fetch("/api/comments/counts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ targetIds: ids }),
+        });
+        const data = await res.json();
+        setCommentCounts(prev => ({ ...prev, ...data }));
+      } catch (err) {
+        console.error("Failed to fetch comment counts");
+      }
+    };
+    fetchCounts();
+  }, [displayedNews]);
+
   const handleLoadMore = () => {
     setDisplayCount(prev => prev + 20);
+  };
+
+  const handleCommentClick = (id: string, title: string) => {
+    setSelectedItem({ id, title });
   };
 
   return (
@@ -127,11 +154,14 @@ export function NewsFeed({ initialNews }: NewsFeedProps) {
               {displayedNews.map((item) => (
                 <div key={item._id} className="animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both">
                   <NewsCard
+                    id={item._id}
                     toolName={item.toolName}
                     company={item.company === 'Anthropic' ? 'Claude' : item.company}
                     summary={item.summary}
                     link={item.link}
                     date={new Date(item.date)}
+                    hasComments={(commentCounts[item._id] || 0) > 0}
+                    onCommentClick={handleCommentClick}
                   />
                 </div>
               ))}
@@ -164,6 +194,13 @@ export function NewsFeed({ initialNews }: NewsFeedProps) {
           </div>
         )}
       </div>
+
+      <CommentModal 
+        isOpen={!!selectedItem} 
+        onClose={() => setSelectedItem(null)} 
+        targetId={selectedItem?.id || ""} 
+        targetTitle={selectedItem?.title || ""} 
+      />
     </section>
   );
 }

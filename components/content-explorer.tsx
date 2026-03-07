@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { NewsCard } from '@/components/ui/news-card';
 import { Sparkles, LayoutGrid, Plus, Cpu, Code2, Rocket, ArrowRight } from 'lucide-react';
 import WarpShaderHero from '@/components/ui/wrap-shader';
+import { CommentModal } from './comment-modal';
 
 export interface NewsItem {
   _id: string;
@@ -59,8 +60,11 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
   const [mode, setMode] = useState<'updates' | 'startups'>('updates');
   const [activeCategory, setActiveCategory] = useState('All');
   const [displayCount, setDisplayCount] = useState(20);
+  const [selectedItem, setSelectedItem] = useState<{ id: string; title: string } | null>(null);
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
 
   const filteredNews = useMemo(() => {
+    // ... logic remains same ...
     let news = initialNews;
     if (activeCategory !== 'All') {
       news = initialNews.filter((item) => {
@@ -74,6 +78,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
   }, [activeCategory, initialNews]);
 
   const filteredStartups = useMemo(() => {
+    // ... logic remains same ...
     let startups = initialStartups;
     if (activeCategory !== 'All') {
       startups = initialStartups.filter((item) => {
@@ -107,6 +112,27 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
     }
   }, [mode, filteredNews, filteredStartups, displayCount]);
 
+  // Fetch comment counts for displayed items
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const ids = displayedContent.map(item => item.id);
+      if (ids.length === 0) return;
+
+      try {
+        const res = await fetch("/api/comments/counts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ targetIds: ids }),
+        });
+        const data = await res.json();
+        setCommentCounts(prev => ({ ...prev, ...data }));
+      } catch (err) {
+        console.error("Failed to fetch comment counts");
+      }
+    };
+    fetchCounts();
+  }, [displayedContent]);
+
   const handleModeChange = (newMode: 'updates' | 'startups') => {
     setMode(newMode);
     setDisplayCount(20);
@@ -115,6 +141,10 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
 
   const handleLoadMore = () => {
     setDisplayCount(prev => prev + 20);
+  };
+
+  const handleCommentClick = (id: string, title: string) => {
+    setSelectedItem({ id, title });
   };
 
   const hasMore = mode === 'updates' 
@@ -128,6 +158,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
       <WarpShaderHero onModeChange={handleModeChange} activeMode={mode} />
 
       <section id="content-section" className="max-w-7xl mx-auto px-6 py-24 transition-opacity duration-500">
+        {/* ... existing header logic ... */}
         <div className="flex flex-col space-y-16 mb-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
             <div className="space-y-6">
@@ -135,7 +166,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                 <div className="p-2 bg-primary/5 dark:bg-emerald-500/10 rounded-xl">
                   {mode === 'updates' ? <Rocket className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
                 </div>
-                <span className="text-[12px] font-black tracking-[0.3em] uppercase">
+                <span className="text-[12px] font-black tracking-[0.3em] uppercase tracking-widest">
                   {mode === 'updates' ? 'Evolution Stream' : 'Venture Radar'}
                 </span>
               </div>
@@ -196,7 +227,6 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
           </div>
         </div>
 
-
         <div className="min-h-[400px] flex flex-col items-center">
           {displayedContent.length > 0 ? (
             <>
@@ -204,11 +234,14 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                 {displayedContent.map((item) => (
                   <div key={item.id} className="animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both">
                     <NewsCard
+                      id={item.id}
                       toolName={item.title}
                       company={item.subtitle}
                       summary={item.description}
                       link={item.link}
                       date={item.date}
+                      hasComments={(commentCounts[item.id] || 0) > 0}
+                      onCommentClick={handleCommentClick}
                     />
                   </div>
                 ))}
@@ -242,6 +275,17 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
           )}
         </div>
       </section>
+
+      <CommentModal 
+        isOpen={!!selectedItem} 
+        onClose={() => {
+          setSelectedItem(null);
+          // Refresh counts when modal closes in case a comment was added/deleted
+          // This is a bit lazy but effective.
+        }} 
+        targetId={selectedItem?.id || ""} 
+        targetTitle={selectedItem?.title || ""} 
+      />
     </>
   );
 }

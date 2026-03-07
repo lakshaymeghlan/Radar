@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/components/auth-provider";
 import AiAssistant from "@/components/ai-assistant";
 
 export default function RootLayout({
@@ -36,8 +37,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <AiAssistant />
+          <AuthProvider>
+            {children}
+            <AiAssistant />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
