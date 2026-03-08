@@ -13,13 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Launch Radar | Daily AI Tools and Updates",
-  description: "A clean, editorial-style radar platform for daily AI tools and structured news updates.",
+  title: "Radar | The Home for AI Indie Builders",
+  description: "A premium directory and launchpad for the next generation of AI startups and indie tools.",
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import AiAssistant from "@/components/ai-assistant";
+
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -40,6 +42,7 @@ export default function RootLayout({
           <AuthProvider>
             {children}
             <AiAssistant />
+            <Toaster position="bottom-right" />
           </AuthProvider>
         </ThemeProvider>
       </body>

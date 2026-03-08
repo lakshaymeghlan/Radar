@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { targetId, content } = await request.json();
+    const { targetId, content, parentCommentId } = await request.json();
 
     if (!targetId || !content) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -40,11 +40,28 @@ export async function POST(request: Request) {
       userId: session.user.id,
       userName: session.user.name,
       content,
+      parentCommentId: parentCommentId ? new ObjectId(parentCommentId) : null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     const result = await db.collection("comments").insertOne(comment);
+
+    // Create notification if it's a radar startup
+    try {
+      const startup = await db.collection("radar_startups").findOne({ _id: new ObjectId(targetId) });
+      if (startup && startup.founderId.toString() !== session.user.id) {
+        const { createNotification } = await import("@/lib/notifications");
+        await createNotification({
+          userId: startup.founderId,
+          message: `${session.user.name} commented on your startup "${startup.name}"`,
+          type: "comment_reply",
+          link: "/", // Or specific link
+        });
+      }
+    } catch (e) {
+      console.error("Failed to notify founder:", e);
+    }
 
     return NextResponse.json({ ...comment, _id: result.insertedId }, { status: 201 });
   } catch (error: any) {

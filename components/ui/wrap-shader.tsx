@@ -55,8 +55,8 @@ export default function WarpShaderHero({ onModeChange, activeMode = 'updates' }:
       <div className="relative z-10 min-h-[90vh] flex items-center justify-center px-8">
         <div className="max-w-4xl w-full text-center space-y-12">
           <div className="space-y-6">
-            <h1 className="text-foreground dark:text-white text-6xl md:text-9xl font-sans font-light tracking-tighter text-balance leading-none animate-in fade-in slide-in-from-top-4 duration-1000 dark:text-glow">
-              AI Launch Radar
+            <h1 className="text-foreground dark:text-white text-6xl md:text-[10rem] font-sans font-light tracking-tighter text-balance leading-none animate-in fade-in slide-in-from-top-4 duration-1000 dark:text-glow">
+              Radar
             </h1>
             <p className="text-muted-foreground dark:text-gray-300 text-xl md:text-2xl font-sans font-light leading-relaxed max-w-3xl mx-auto tracking-tight">
               Tracking the frontier of <span className="text-slate-900 dark:text-white font-medium">Artificial Intelligence</span> and <span className="text-slate-900 dark:text-white font-medium">Startup launches</span>. <br className="hidden md:block" />

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { RefreshCw, Check, Clock, Rocket } from 'lucide-react';
+import { RefreshCw, Check, Clock, Rocket, Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { RadarLogo } from './ui/radar-logo';
@@ -10,6 +10,7 @@ import { RadarLogo } from './ui/radar-logo';
 import { ThemeToggle } from './theme-toggle';
 import { useAuth } from './auth-provider';
 import { AuthModal } from './auth-modal';
+import { NotificationDropdown } from './notification-dropdown';
 
 export const Navbar = () => {
   const [isSyncing, setIsSyncing] = useState(false);
@@ -47,14 +48,22 @@ export const Navbar = () => {
     <>
       <nav className="fixed top-0 z-[100] w-full px-6 py-4 transition-all duration-700">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-3 rounded-full bg-white/70 dark:bg-slate-950/80 backdrop-blur-xl border border-white/40 dark:border-emerald-500/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] dark:shadow-emerald-500/10 transition-all">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-lg bg-slate-900 dark:bg-emerald-500 flex items-center justify-center text-white p-1.5 group-hover:scale-110 transition-all duration-500 dark:shadow-[0_0_15px_rgba(16,185,129,0.5)]">
-              <RadarLogo className="w-full h-full" color="white" />
+          <div className="flex items-center gap-10">
+            <Link href="/" className="flex items-center gap-2 group shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-slate-900 dark:bg-emerald-500 flex items-center justify-center text-white p-1.5 group-hover:scale-110 transition-all duration-500 dark:shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                <RadarLogo className="w-full h-full" color="white" />
+              </div>
+              <span className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white dark:text-glow">
+                Radar
+              </span>
+            </Link>
+
+            <div className="hidden md:flex items-center gap-6">
+              <Link href="/about" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-emerald-400 transition-colors">
+                 About Radar
+              </Link>
             </div>
-            <span className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white dark:text-glow">
-              Radar
-            </span>
-          </Link>
+          </div>
           
           <div className="flex items-center gap-6">
             <ThemeToggle />
@@ -97,9 +106,24 @@ export const Navbar = () => {
 
             {user ? (
               <div className="flex items-center gap-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden sm:block">
-                  Hi, {user.name.split(' ')[0]}
-                </span>
+                <NotificationDropdown />
+                
+                <Link 
+                  href="/profile"
+                  className="flex items-center gap-2 group px-2 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-900 transition-all font-bold text-slate-900 dark:text-white"
+                >
+                  <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-slate-600 dark:text-emerald-500 border border-slate-300 dark:border-emerald-500/30 overflow-hidden">
+                    {user.avatar ? (
+                      <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      user.name.charAt(0).toUpperCase()
+                    )}
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden sm:block">
+                    {user.name.split(' ')[0]}
+                  </span>
+                </Link>
+
                 <button 
                   onClick={() => logout()}
                   className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-rose-500 hover:text-rose-400 transition-colors"

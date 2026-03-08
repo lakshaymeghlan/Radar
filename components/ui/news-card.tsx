@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowRight, MessageSquare } from 'lucide-react';
+import { ArrowRight, MessageSquare, Heart, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface NewsCardProps {
@@ -13,6 +13,9 @@ interface NewsCardProps {
   date: Date;
   hasComments?: boolean;
   onCommentClick: (id: string, title: string) => void;
+  isRadar?: boolean;
+  upvotesCount?: number;
+  verified?: boolean;
 }
 
 export const NewsCard: React.FC<NewsCardProps> = ({
@@ -24,7 +27,29 @@ export const NewsCard: React.FC<NewsCardProps> = ({
   date,
   hasComments,
   onCommentClick,
+  isRadar,
+  upvotesCount = 0,
+  verified = false,
 }) => {
+  const [upvotes, setUpvotes] = React.useState(upvotesCount);
+  const [isUpvoted, setIsUpvoted] = React.useState(false);
+
+  const handleUpvote = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!isRadar) return;
+
+    try {
+      const res = await fetch(`/api/radar-startups/${id}/upvote`, { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setUpvotes(prev => data.upvoted ? prev + 1 : prev - 1);
+        setIsUpvoted(data.upvoted);
+      }
+    } catch (e) {
+      console.error("Upvote failed");
+    }
+  };
+
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric'
@@ -38,6 +63,19 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             {company}
           </Badge>
           <div className="flex items-center gap-4">
+            {isRadar && (
+              <button 
+                onClick={handleUpvote}
+                className={`flex items-center gap-1.5 transition-all duration-500 font-bold text-[10px] uppercase tracking-widest ${
+                  isUpvoted 
+                    ? 'text-rose-500 bg-rose-50 dark:bg-rose-500/10 px-3 py-2 rounded-full border border-rose-200 dark:border-rose-500/20' 
+                    : 'text-slate-400 hover:text-rose-500'
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${isUpvoted ? 'fill-rose-500' : ''}`} />
+                {upvotes > 0 && <span>{upvotes}</span>}
+              </button>
+            )}
             <button 
               onClick={(e) => {
                 e.preventDefault();
@@ -57,8 +95,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             <span className="text-[10px] text-slate-300 dark:text-slate-600 font-bold uppercase tracking-widest">{formattedDate}</span>
           </div>
         </div>
-        <CardTitle className="text-2xl font-light text-slate-900 dark:text-white tracking-tight leading-[1.25] group-hover:text-teal-700 dark:group-hover:text-emerald-400 transition-colors duration-500">
+        <CardTitle className="text-2xl font-light text-slate-900 dark:text-white tracking-tight leading-[1.25] group-hover:text-teal-700 dark:group-hover:text-emerald-400 transition-colors duration-500 flex items-center gap-2">
           {toolName}
+          {verified && (
+             <CheckCircle2 className="w-5 h-5 text-emerald-500 fill-emerald-500/10" title="Verified Startup" />
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-grow px-8">

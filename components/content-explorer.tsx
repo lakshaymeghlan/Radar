@@ -5,8 +5,11 @@ import { NewsCard } from '@/components/ui/news-card';
 import { Sparkles, LayoutGrid, Plus, Cpu, Code2, Rocket, ArrowRight } from 'lucide-react';
 import WarpShaderHero from '@/components/ui/wrap-shader';
 import { CommentModal } from './comment-modal';
+import { RadarModal } from './radar-modal';
+import { useAuth } from './auth-provider';
 
 export interface NewsItem {
+// ... existing ...
   _id: string;
   toolName: string;
   company: string;
@@ -57,14 +60,44 @@ const STARTUP_CATEGORIES = [
 ];
 
 export function ContentExplorer({ initialNews, initialStartups }: ContentExplorerProps) {
+  const { user } = useAuth();
   const [mode, setMode] = useState<'updates' | 'startups'>('updates');
+  const [startupSubMode, setStartupSubMode] = useState<'curated' | 'radar'>('curated');
+  const [radarStartups, setRadarStartups] = useState<StartupItem[]>([]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [displayCount, setDisplayCount] = useState(20);
   const [selectedItem, setSelectedItem] = useState<{ id: string; title: string } | null>(null);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
+  const [isLoadingRadar, setIsLoadingRadar] = useState(false);
+  const [isRadarModalOpen, setIsRadarModalOpen] = useState(false);
+
+  const fetchRadar = async () => {
+    setIsLoadingRadar(true);
+    try {
+      const res = await fetch("/api/radar-startups");
+      const data = await res.json();
+      if (data.startups) {
+        setRadarStartups(data.startups.map((s: any) => ({
+          ...s,
+          _id: s._id.toString(),
+          date: s.createdAt,
+          source: 'Radar community'
+        })));
+      }
+    } catch (err) {
+      console.error("Failed to fetch radar startups");
+    } finally {
+      setIsLoadingRadar(false);
+    }
+  };
+
+  useEffect(() => {
+    if (mode === 'startups' && startupSubMode === 'radar') {
+      fetchRadar();
+    }
+  }, [mode, startupSubMode]);
 
   const filteredNews = useMemo(() => {
-    // ... logic remains same ...
     let news = initialNews;
     if (activeCategory !== 'All') {
       news = initialNews.filter((item) => {
@@ -77,8 +110,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
     return news;
   }, [activeCategory, initialNews]);
 
-  const filteredStartups = useMemo(() => {
-    // ... logic remains same ...
+  const filteredCuratedStartups = useMemo(() => {
     let startups = initialStartups;
     if (activeCategory !== 'All') {
       startups = initialStartups.filter((item) => {
@@ -87,6 +119,16 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
     }
     return startups;
   }, [activeCategory, initialStartups]);
+
+  const filteredRadarStartups = useMemo(() => {
+    let startups = radarStartups;
+    if (activeCategory !== 'All') {
+      startups = radarStartups.filter((item) => {
+        return item.tags?.includes(activeCategory);
+      });
+    }
+    return startups;
+  }, [activeCategory, radarStartups]);
 
   const displayedContent = useMemo(() => {
     if (mode === 'updates') {
@@ -100,19 +142,22 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
         type: 'update'
       }));
     } else {
-      return filteredStartups.slice(0, displayCount).map(item => ({
+      const source = startupSubMode === 'curated' ? filteredCuratedStartups : filteredRadarStartups;
+      return source.slice(0, displayCount).map(item => ({
         id: item._id,
         title: item.name,
         subtitle: item.source,
         description: item.description.replace(/<[^>]*>?/gm, ''),
         link: item.link,
         date: new Date(item.date),
-        type: 'startup'
+        type: 'startup',
+        isRadar: startupSubMode === 'radar',
+        upvotesCount: (item as any).upvotes || 0,
+        verified: (item as any).status === 'verified'
       }));
     }
-  }, [mode, filteredNews, filteredStartups, displayCount]);
+  }, [mode, startupSubMode, filteredNews, filteredCuratedStartups, filteredRadarStartups, displayCount]);
 
-  // Fetch comment counts for displayed items
   useEffect(() => {
     const fetchCounts = async () => {
       const ids = displayedContent.map(item => item.id);
@@ -135,6 +180,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
 
   const handleModeChange = (newMode: 'updates' | 'startups') => {
     setMode(newMode);
+    setStartupSubMode('curated');
     setDisplayCount(20);
     setActiveCategory('All');
   };
@@ -149,7 +195,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
 
   const hasMore = mode === 'updates' 
     ? displayCount < filteredNews.length 
-    : displayCount < filteredStartups.length;
+    : displayCount < (startupSubMode === 'curated' ? filteredCuratedStartups.length : filteredRadarStartups.length);
 
   const currentCategories = mode === 'updates' ? UPDATES_CATEGORIES : STARTUP_CATEGORIES;
 
@@ -158,7 +204,6 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
       <WarpShaderHero onModeChange={handleModeChange} activeMode={mode} />
 
       <section id="content-section" className="max-w-7xl mx-auto px-6 py-24 transition-opacity duration-500">
-        {/* ... existing header logic ... */}
         <div className="flex flex-col space-y-16 mb-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
             <div className="space-y-6">
@@ -177,6 +222,44 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                   <>Recent <span className="font-serif italic text-primary dark:text-emerald-400 dark:text-glow">Startups</span></>
                 )}
               </h2>
+              
+              {mode === 'startups' && (
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-3 p-1.5 bg-slate-100 dark:bg-slate-900/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800">
+                    <button
+                      onClick={() => setStartupSubMode('curated')}
+                      className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                        startupSubMode === 'curated'
+                          ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl'
+                          : 'text-slate-500 hover:text-slate-900 dark:hover:text-emerald-400'
+                      }`}
+                    >
+                      Curated
+                    </button>
+                    <button
+                      onClick={() => setStartupSubMode('radar')}
+                      className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                        startupSubMode === 'radar'
+                          ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl'
+                          : 'text-slate-500 hover:text-slate-900 dark:hover:text-emerald-400'
+                      }`}
+                    >
+                      Community Radar
+                    </button>
+                  </div>
+
+                  {startupSubMode === 'radar' && user && (
+                    <button
+                      onClick={() => setIsRadarModalOpen(true)}
+                      className="group flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/20"
+                    >
+                      <Plus className="w-4 h-4" />
+                      List Your Startup
+                    </button>
+                  )}
+                </div>
+              )}
+
               <div className="flex items-center gap-6 pt-2">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Code2 className="w-4 h-4" />
@@ -197,7 +280,9 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
             <p className="text-muted-foreground text-sm font-light max-w-xs md:text-right leading-relaxed border-l-2 border-border pl-6 md:border-l-0 md:pl-0">
               {mode === 'updates' 
                 ? 'A real-time signal tracker covering the last 7 days of agentic AI, coding assistants, and frontier tech.'
-                : 'Curated snapshot of the most promising ventures from AI, Blockchain, and Tech ecosystem from the last 2 years.'}
+                : startupSubMode === 'curated'
+                  ? 'Curated snapshot of the most promising ventures from AI, Blockchain, and Tech ecosystem from the last 2 years.'
+                  : 'Startups built by the community. Up-and-coming projects listed by founders themselves on the Radar.'}
             </p>
           </div>
           
@@ -242,6 +327,9 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                       date={item.date}
                       hasComments={(commentCounts[item.id] || 0) > 0}
                       onCommentClick={handleCommentClick}
+                      isRadar={(item as any).isRadar}
+                      upvotesCount={(item as any).upvotesCount}
+                      verified={(item as any).verified}
                     />
                   </div>
                 ))}
@@ -276,12 +364,16 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
         </div>
       </section>
 
+      <RadarModal 
+        isOpen={isRadarModalOpen} 
+        onClose={() => setIsRadarModalOpen(false)} 
+        onSuccess={fetchRadar}
+      />
+
       <CommentModal 
         isOpen={!!selectedItem} 
         onClose={() => {
           setSelectedItem(null);
-          // Refresh counts when modal closes in case a comment was added/deleted
-          // This is a bit lazy but effective.
         }} 
         targetId={selectedItem?.id || ""} 
         targetTitle={selectedItem?.title || ""} 
