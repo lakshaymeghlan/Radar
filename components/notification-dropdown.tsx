@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Bell, X, Check, Loader2, MessageSquare, Heart, Briefcase, Info } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const NotificationDropdown = () => {
