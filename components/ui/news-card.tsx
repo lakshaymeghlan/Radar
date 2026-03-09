@@ -98,7 +98,9 @@ export const NewsCard: React.FC<NewsCardProps> = ({
         <CardTitle className="text-2xl font-light text-slate-900 dark:text-white tracking-tight leading-[1.25] group-hover:text-teal-700 dark:group-hover:text-emerald-400 transition-colors duration-500 flex items-center gap-2">
           {toolName}
           {verified && (
-             <CheckCircle2 className="w-5 h-5 text-emerald-500 fill-emerald-500/10" title="Verified Startup" />
+            <span title="Verified Startup">
+              <CheckCircle2 className="w-5 h-5 text-emerald-500 fill-emerald-500/10" />
+            </span>
           )}
         </CardTitle>
       </CardHeader>
