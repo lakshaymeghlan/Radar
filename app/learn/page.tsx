@@ -1,7 +1,13 @@
 import { Navbar } from '@/components/navbar';
 import { BookOpen, ExternalLink, Code2, Search, Zap, Rocket, Workflow, Image as ImageIcon, Video, Headset, TrendingUp, Gem } from 'lucide-react';
 
-const CATEGORIES = [
+interface Tool {
+  name: string;
+  link: string;
+  useCase?: string;
+}
+
+const CATEGORIES: { title: string; icon: React.ReactNode; color: string; bg: string; tools: Tool[] }[] = [
   {
     title: "AI Coding / Developer Tools",
     icon: <Code2 className="w-5 h-5" />,
