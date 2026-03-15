@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowRight, MessageSquare, Heart, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, MessageSquare, Heart, CheckCircle2, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface NewsCardProps {
@@ -16,6 +16,9 @@ interface NewsCardProps {
   isRadar?: boolean;
   upvotesCount?: number;
   verified?: boolean;
+  initialLiked?: boolean;
+  onMessageClick?: (id: string, founderId: string) => void;
+  founderId?: string;
 }
 
 export const NewsCard: React.FC<NewsCardProps> = ({
@@ -30,9 +33,16 @@ export const NewsCard: React.FC<NewsCardProps> = ({
   isRadar,
   upvotesCount = 0,
   verified = false,
+  initialLiked = false,
+  onMessageClick,
+  founderId,
 }) => {
   const [upvotes, setUpvotes] = React.useState(upvotesCount);
-  const [isUpvoted, setIsUpvoted] = React.useState(false);
+  const [isUpvoted, setIsUpvoted] = React.useState(initialLiked);
+
+  React.useEffect(() => {
+    setIsUpvoted(initialLiked);
+  }, [initialLiked]);
 
   const handleUpvote = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -74,6 +84,18 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               >
                 <Heart className={`w-4 h-4 ${isUpvoted ? 'fill-rose-500' : ''}`} />
                 {upvotes > 0 && <span>{upvotes}</span>}
+              </button>
+            )}
+            {isRadar && founderId && onMessageClick && (
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  onMessageClick(id, founderId);
+                }}
+                className="p-2 rounded-full text-slate-300 dark:text-slate-600 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all duration-500"
+                title="Message Founder"
+              >
+                <MessageCircle className="w-4 h-4" />
               </button>
             )}
             <button 

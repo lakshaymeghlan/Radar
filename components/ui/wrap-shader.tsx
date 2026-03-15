@@ -5,8 +5,8 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 interface WarpShaderHeroProps {
-  onModeChange?: (mode: 'updates' | 'startups') => void;
-  activeMode?: 'updates' | 'startups';
+  onModeChange?: (mode: 'updates' | 'startups' | 'jobs') => void;
+  activeMode?: 'updates' | 'startups' | 'jobs';
 }
 
 export default function WarpShaderHero({ onModeChange, activeMode = 'updates' }: WarpShaderHeroProps) {
@@ -19,7 +19,7 @@ export default function WarpShaderHero({ onModeChange, activeMode = 'updates' }:
     document.getElementById('content-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleModeClick = (mode: 'updates' | 'startups') => {
+  const handleModeClick = (mode: 'updates' | 'startups' | 'jobs') => {
     if (onModeChange) {
       onModeChange(mode);
       setTimeout(scrollToContent, 100);
@@ -75,7 +75,7 @@ export default function WarpShaderHero({ onModeChange, activeMode = 'updates' }:
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               <span className="relative flex items-center justify-center gap-3 font-semibold">
-                Explore AI Updates
+                AI Updates
                 <span className={`transition-transform duration-500 ${activeMode === 'updates' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
               </span>
             </button>
@@ -90,8 +90,23 @@ export default function WarpShaderHero({ onModeChange, activeMode = 'updates' }:
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               <span className="relative flex items-center justify-center gap-3 font-semibold">
-                Explore Startups
+                Startups
                 <span className={`transition-transform duration-500 ${activeMode === 'startups' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
+              </span>
+            </button>
+
+            <button 
+              onClick={() => handleModeClick('jobs')}
+              className={`group relative overflow-hidden px-12 py-6 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all duration-500 hover:scale-105 active:scale-95 shadow-2xl ${
+                activeMode === 'jobs'
+                  ? 'bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 shadow-slate-900/20 dark:shadow-emerald-500/40'
+                  : 'bg-white/40 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-emerald-500/20 text-slate-900 dark:text-white hover:bg-white/60 dark:hover:bg-slate-800/80 shadow-black/5'
+              }`}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <span className="relative flex items-center justify-center gap-3 font-semibold">
+                Hiring
+                <span className={`transition-transform duration-500 ${activeMode === 'jobs' ? 'translate-y-1' : 'group-hover:translate-y-1'}`}>↓</span>
               </span>
             </button>
           </div>

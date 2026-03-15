@@ -7,16 +7,19 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { User, Mail, MapPin, Globe, Loader2, Camera, Save, Rocket, Plus, BriefcaseBusiness, ExternalLink, CheckCircle2, Trash2 } from "lucide-react";
+import { User, Mail, MapPin, Globe, Loader2, Camera, Save, Rocket, Plus, BriefcaseBusiness, ExternalLink, CheckCircle2, Trash2, ArrowLeft, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { JobModal } from "@/components/job-modal";
 import { Badge } from "@/components/ui/badge";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { user: authUser } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const [myStartups, setMyStartups] = useState<any[]>([]);
+  const [likedStartups, setLikedStartups] = useState<any[]>([]);
   const [myJobs, setMyJobs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -26,9 +29,10 @@ export default function ProfilePage() {
 
   const fetchData = async () => {
     try {
-      const [profileRes, startupsRes, jobsRes] = await Promise.all([
+      const [profileRes, startupsRes, likedRes, jobsRes] = await Promise.all([
         fetch("/api/profile"),
         fetch("/api/radar-startups/me"),
+        fetch("/api/radar-startups/liked"),
         fetch("/api/jobs/me")
       ]);
       
@@ -37,6 +41,9 @@ export default function ProfilePage() {
 
       const startupsData = await startupsRes.json();
       if (startupsData.startups) setMyStartups(startupsData.startups);
+
+      const likedData = await likedRes.json();
+      if (likedData.startups) setLikedStartups(likedData.startups);
 
       const jobsData = await jobsRes.json();
       if (jobsData.jobs) setMyJobs(jobsData.jobs);
@@ -51,6 +58,16 @@ export default function ProfilePage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleBack = () => {
+    // Edge case: if directly landed on the page, history length is 1 or 2
+    if (typeof window !== "undefined" && window.history.length > 2) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,6 +147,14 @@ export default function ProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        <Button 
+          variant="ghost" 
+          onClick={handleBack}
+          className="mb-6 -ml-4 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white gap-2 transition-colors rounded-xl"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Button>
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <div className="w-full lg:w-1/3 flex flex-col gap-8">
@@ -207,6 +232,29 @@ export default function ProfilePage() {
                 >
                   <Plus className="w-4 h-4" /> List New Startup
                 </Button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-900 dark:text-white mb-2 ml-1 flex items-center gap-2">
+                <Heart className="w-4 h-4 text-rose-500 fill-rose-500" /> Liked Startups
+              </h3>
+              <div className="grid grid-cols-1 gap-3">
+                {likedStartups.length > 0 ? (
+                  likedStartups.map((startup) => (
+                    <div key={startup._id} className="p-4 rounded-2xl border border-slate-200 dark:border-rose-500/10 bg-white/50 dark:bg-slate-900/40 hover:border-rose-500/30 transition-all group">
+                      <div className="flex items-center justify-between mb-1">
+                        <h4 className="font-bold text-sm truncate">{startup.name}</h4>
+                        <Link href={startup.link} target="_blank" className="text-slate-400 hover:text-emerald-500 shrink-0">
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                      </div>
+                      <p className="text-[10px] text-slate-500 line-clamp-1">{startup.tagline || "Built on Radar"}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-slate-400 italic py-4">No liked startups yet.</p>
+                )}
               </div>
             </div>
 

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/components/auth-provider";
+import AiAssistant from "@/components/ai-assistant";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,12 +20,6 @@ export const metadata: Metadata = {
   title: "Radar | The Home for AI Indie Builders",
   description: "A premium directory and launchpad for the next generation of AI startups and indie tools.",
 };
-
-import { ThemeProvider } from "@/components/theme-provider";
-import { AuthProvider } from "@/components/auth-provider";
-import AiAssistant from "@/components/ai-assistant";
-
-import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -40,7 +38,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            {children}
+            <main>
+              {children}
+            </main>
             <AiAssistant />
             <Toaster position="bottom-right" />
           </AuthProvider>

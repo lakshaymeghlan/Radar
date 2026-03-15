@@ -1,18 +1,20 @@
 import { Navbar } from '@/components/navbar';
 import { ContentExplorer, NewsItem, StartupItem } from '@/components/content-explorer';
 import { getDb } from '@/lib/mongodb';
+import { getSession } from '@/lib/auth';
+import { ObjectId } from 'mongodb';
 import { Cpu, Sparkles, Globe } from 'lucide-react';
 import Link from 'next/link';
 
 async function getNews(): Promise<NewsItem[]> {
   try {
     const db = await getDb();
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
     const news = await db.collection('news')
       .find({
-        date: { $gte: sevenDaysAgo }
+        date: { $gte: thirtyDaysAgo }
       })
       .sort({ date: -1 })
       .toArray();
@@ -34,15 +36,27 @@ async function getNews(): Promise<NewsItem[]> {
 async function getStartups(): Promise<StartupItem[]> {
   try {
     const db = await getDb();
+    const session = await getSession();
+    const userId = session?.user?.id;
+
     const twoYearsAgo = new Date();
     twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
     
     const startups = await db.collection('startups')
       .find({
-        date: { $gte: twoYearsAgo }
+        date: { $gte: twoYearsAgo },
+        status: { $ne: 'pending_approval' }
       })
       .sort({ date: -1 })
       .toArray();
+
+    let likedIds: string[] = [];
+    if (userId) {
+      const upvotes = await db.collection("upvotes").find({
+        userId: new ObjectId(userId)
+      }).toArray();
+      likedIds = upvotes.map(uv => uv.targetId.toString());
+    }
     
     return startups.map(item => ({
       _id: item._id.toString(),
@@ -52,6 +66,8 @@ async function getStartups(): Promise<StartupItem[]> {
       source: item.source || '',
       tags: item.tags || [],
       date: item.date instanceof Date ? item.date.toISOString() : new Date(item.date).toISOString(),
+      isLiked: likedIds.includes(item._id.toString()),
+      founderId: item.founderId?.toString()
     }));
   } catch (error) {
     console.error('Failed to fetch startups:', error);

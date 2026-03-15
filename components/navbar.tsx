@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { RefreshCw, Check, Clock, Rocket, Bell } from 'lucide-react';
+import { RefreshCw, Check, Clock, Rocket, Bell, Briefcase } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { RadarLogo } from './ui/radar-logo';
@@ -59,9 +59,14 @@ export const Navbar = () => {
             </Link>
 
             <div className="hidden md:flex items-center gap-6">
-              <Link href="/about" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-emerald-400 transition-colors">
-                 About Radar
+              <Link href="/learn" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                 Learn AI
               </Link>
+              {user && (
+                <Link href="/inbox" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                  Inbox
+                </Link>
+              )}
             </div>
           </div>
           

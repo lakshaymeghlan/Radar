@@ -6,12 +6,28 @@ import { ObjectId } from "mongodb";
 export async function GET() {
   try {
     const db = await getDb();
+    const session = await getSession();
+    const userId = session?.user?.id;
+
     const startups = await db.collection("radar_startups")
       .find({ status: { $in: ["published", "verified"] } })
       .sort({ createdAt: -1 })
       .toArray();
 
-    return NextResponse.json({ startups });
+    let likedIds: string[] = [];
+    if (userId) {
+      const upvotes = await db.collection("upvotes").find({
+        userId: new ObjectId(userId)
+      }).toArray();
+      likedIds = upvotes.map((uv: any) => uv.targetId.toString());
+    }
+
+    const startupsWithLiked = startups.map((s: any) => ({
+      ...s,
+      isLiked: likedIds.includes(s._id.toString())
+    }));
+
+    return NextResponse.json({ startups: startupsWithLiked });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import Parser from 'rss-parser';
 import clientPromise from '@/lib/mongodb';
+import crypto from 'crypto';
 
 const parser = new Parser({
   headers: {
@@ -9,13 +10,17 @@ const parser = new Parser({
 });
 
 const SOURCES = [
-  // THE BEST SOURCES FOR CLAUDE/AI NEWS
-  { name: 'Simon Willison', url: 'https://simonwillison.net/atom/entries/' },
-  { name: 'Anthropic Engineering', url: 'https://www.anthropic.com/index.xml' }, // Sometimes works via proxy/headers
   { name: 'TechCrunch AI', url: 'https://techcrunch.com/category/artificial-intelligence/feed/' },
   { name: 'The Verge AI', url: 'https://www.theverge.com/ai-artificial-intelligence/rss/index.xml' },
-  { name: 'Arxiv AI', url: 'http://export.arxiv.org/api/query?search_query=cat:cs.AI&sortby=submittedDate&sortOrder=descending' },
-  { name: 'Google News AI', url: 'https://news.google.com/rss/search?q=Anthropic+Claude+OR+OpenAI+GPT+OR+Gemini+AI&hl=en-US&gl=US&ceid=US:en' },
+  { name: 'VentureBeat AI', url: 'https://venturebeat.com/category/ai/feed/' },
+  { name: 'MarkTechPost', url: 'https://www.marktechpost.com/feed/' },
+  { name: 'Wired AI', url: 'https://www.wired.com/feed/tag/ai/latest/rss' },
+  { name: 'KDnuggets', url: 'https://www.kdnuggets.com/feed' },
+  { name: 'AI News', url: 'https://www.artificialintelligence-news.com/feed/' },
+  { name: 'InfoQ AI', url: 'https://feed.infoq.com/ai-ml-data-eng/news' },
+  { name: 'Hugging Face Blog', url: 'https://huggingface.co/blog/feed.xml' },
+  { name: 'Google News AI', url: 'https://news.google.com/rss/search?q=Anthropic+Claude+OR+OpenAI+GPT+OR+Gemini+AI+OR+LLM&hl=en-US&gl=US&ceid=US:en' },
+  { name: 'Arxiv AI', url: 'http://export.arxiv.org/api/query?search_query=cat:cs.AI&sortby=submittedDate&sortOrder=descending&max_results=5' },
 ];
 
 function cleanSummary(text: string): string {
@@ -52,26 +57,30 @@ export async function GET() {
   const db = client.db();
   const collection = db.collection('news');
 
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
-  // Clean up old data strictly
-  await collection.deleteMany({ date: { $lt: sevenDaysAgo } });
+  // Create a TTL index: documents expire 30 days (2592000 seconds) after the 'date' field
+  // This automatically cleans up old news without needing a manual delete cron!
+  await collection.createIndex({ date: 1 }, { expireAfterSeconds: 2592000 });
 
   let syncedCount = 0;
+  const errors: string[] = [];
 
   for (const source of SOURCES) {
     try {
-      const feed = await parser.parseURL(source.url).catch(() => null);
+      const feed = await parser.parseURL(source.url);
       if (!feed) continue;
       
       for (const item of feed.items) {
         const itemDate = item.pubDate ? new Date(item.pubDate) : (item.isoDate ? new Date(item.isoDate) : new Date());
-        if (itemDate < sevenDaysAgo) continue;
+        if (itemDate < thirtyDaysAgo) continue;
 
         const summary = cleanSummary(item.contentSnippet || item.content || item.description || '');
         const title = item.title || '';
         const company = determineCompany(title, summary, source.name);
+
+        const hash = crypto.createHash('sha256').update(item.link || item.title || '').digest('hex');
 
         const newsItem = {
           title,
@@ -80,21 +89,25 @@ export async function GET() {
           summary: summary.length > 10 ? summary : title,
           link: item.link,
           date: itemDate,
+          hash,
           createdAt: new Date(),
         };
 
+        const { company: _c, date: _d, summary: _s, ...insertOnlyFields } = newsItem;
+
         const result = await collection.updateOne(
-          { link: newsItem.link },
+          { hash },
           { 
-            $setOnInsert: { ...newsItem, _id: undefined },
+            $setOnInsert: insertOnlyFields,
             $set: { company, date: itemDate, summary: newsItem.summary } 
           },
           { upsert: true }
         );
         if (result.upsertedCount > 0 || result.modifiedCount > 0) syncedCount++;
       }
-    } catch (e) {
-      console.error(`Fetch error ${source.name}:`, e);
+    } catch (e: any) {
+      console.error(`Fetch error ${source.name}:`, e.message);
+      errors.push(`Fetch error ${source.name}: ${e.message}`);
     }
   }
 
@@ -114,5 +127,5 @@ export async function GET() {
     syncedCount++;
   }
 
-  return NextResponse.json({ syncedCount });
+  return NextResponse.json({ syncedCount, errors });
 }

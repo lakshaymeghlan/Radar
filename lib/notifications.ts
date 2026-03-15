@@ -9,7 +9,7 @@ export async function createNotification({
 }: {
   userId: string | ObjectId;
   message: string;
-  type: "comment_reply" | "startup_voted" | "job_posted" | "system";
+  type: "comment_reply" | "startup_voted" | "job_posted" | "system" | "new_message";
   link?: string;
 }) {
   try {

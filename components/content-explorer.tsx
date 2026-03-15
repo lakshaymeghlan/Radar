@@ -6,7 +6,9 @@ import { Sparkles, LayoutGrid, Plus, Cpu, Code2, Rocket, ArrowRight } from 'luci
 import WarpShaderHero from '@/components/ui/wrap-shader';
 import { CommentModal } from './comment-modal';
 import { RadarModal } from './radar-modal';
+import { MessageModal } from './message-modal';
 import { useAuth } from './auth-provider';
+import { JobCard } from './ui/job-card';
 
 export interface NewsItem {
 // ... existing ...
@@ -26,6 +28,7 @@ export interface StartupItem {
   source: string;
   tags?: string[];
   date: string;
+  isLiked?: boolean;
 }
 
 interface ContentExplorerProps {
@@ -59,17 +62,27 @@ const STARTUP_CATEGORIES = [
   'Ecommerce'
 ];
 
+const JOB_CATEGORIES = ['All', 'Full-time', 'Part-time', 'Contract', 'Remote', 'Internship'];
+
 export function ContentExplorer({ initialNews, initialStartups }: ContentExplorerProps) {
   const { user } = useAuth();
-  const [mode, setMode] = useState<'updates' | 'startups'>('updates');
-  const [startupSubMode, setStartupSubMode] = useState<'curated' | 'radar'>('curated');
+  const [mode, setMode] = useState<'updates' | 'startups' | 'jobs'>('updates');
+  const [startupSubMode, setStartupSubMode] = useState<'curated' | 'radar'>('radar');
   const [radarStartups, setRadarStartups] = useState<StartupItem[]>([]);
+  const [allJobs, setAllJobs] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [displayCount, setDisplayCount] = useState(20);
   const [selectedItem, setSelectedItem] = useState<{ id: string; title: string } | null>(null);
   const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
   const [isLoadingRadar, setIsLoadingRadar] = useState(false);
   const [isRadarModalOpen, setIsRadarModalOpen] = useState(false);
+  const [selectedRecipient, setSelectedRecipient] = useState<{ id: string; name: string } | null>(null);
+
+  const handleMessageClick = (targetId: string, founderId: string) => {
+    // We need to find the founder's name. For simplicity if we don't have it, we show "Founder"
+    // In a real app we'd fetch or pass the name
+    setSelectedRecipient({ id: founderId, name: "Founder" });
+  };
 
   const fetchRadar = async () => {
     setIsLoadingRadar(true);
@@ -91,9 +104,24 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
     }
   };
 
+  const fetchJobs = async () => {
+    try {
+      const res = await fetch("/api/jobs");
+      const data = await res.json();
+      if (data.jobs) {
+        setAllJobs(data.jobs);
+      }
+    } catch (err) {
+      console.error("Failed to fetch jobs");
+    }
+  };
+
   useEffect(() => {
     if (mode === 'startups' && startupSubMode === 'radar') {
       fetchRadar();
+    }
+    if (mode === 'jobs') {
+      fetchJobs();
     }
   }, [mode, startupSubMode]);
 
@@ -130,6 +158,17 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
     return startups;
   }, [activeCategory, radarStartups]);
 
+  const filteredJobs = useMemo(() => {
+    let jobs = allJobs;
+    if (activeCategory !== 'All') {
+      // Jobs don't have categories in same way, but we can match type or title
+      jobs = allJobs.filter((item) => {
+        return item.type?.includes(activeCategory) || item.title?.includes(activeCategory);
+      });
+    }
+    return jobs;
+  }, [activeCategory, allJobs]);
+
   const displayedContent = useMemo(() => {
     if (mode === 'updates') {
       return filteredNews.slice(0, displayCount).map(item => ({
@@ -141,7 +180,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
         date: new Date(item.date),
         type: 'update'
       }));
-    } else {
+    } else if (mode === 'startups') {
       const source = startupSubMode === 'curated' ? filteredCuratedStartups : filteredRadarStartups;
       return source.slice(0, displayCount).map(item => ({
         id: item._id,
@@ -153,10 +192,25 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
         type: 'startup',
         isRadar: startupSubMode === 'radar',
         upvotesCount: (item as any).upvotes || 0,
-        verified: (item as any).status === 'verified'
+        verified: (item as any).status === 'verified',
+        isLiked: item.isLiked || false,
+        founderId: (item as any).founderId
+      }));
+    } else {
+      return filteredJobs.slice(0, displayCount).map(item => ({
+        id: item._id,
+        title: item.title,
+        subtitle: item.company || "Stealth Startup",
+        description: item.description,
+        link: item.applyLink || "#",
+        date: new Date(item.createdAt),
+        type: 'job',
+        jobType: item.type,
+        location: item.location,
+        founderId: item.founderId
       }));
     }
-  }, [mode, startupSubMode, filteredNews, filteredCuratedStartups, filteredRadarStartups, displayCount]);
+  }, [mode, startupSubMode, filteredNews, filteredCuratedStartups, filteredRadarStartups, filteredJobs, displayCount]);
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -178,9 +232,9 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
     fetchCounts();
   }, [displayedContent]);
 
-  const handleModeChange = (newMode: 'updates' | 'startups') => {
+  const handleModeChange = (newMode: 'updates' | 'startups' | 'jobs') => {
     setMode(newMode);
-    setStartupSubMode('curated');
+    setStartupSubMode('radar');
     setDisplayCount(20);
     setActiveCategory('All');
   };
@@ -195,9 +249,11 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
 
   const hasMore = mode === 'updates' 
     ? displayCount < filteredNews.length 
-    : displayCount < (startupSubMode === 'curated' ? filteredCuratedStartups.length : filteredRadarStartups.length);
+    : mode === 'startups'
+      ? displayCount < (startupSubMode === 'curated' ? filteredCuratedStartups.length : filteredRadarStartups.length)
+      : displayCount < filteredJobs.length;
 
-  const currentCategories = mode === 'updates' ? UPDATES_CATEGORIES : STARTUP_CATEGORIES;
+  const currentCategories = mode === 'updates' ? UPDATES_CATEGORIES : (mode === 'startups' ? STARTUP_CATEGORIES : JOB_CATEGORIES);
 
   return (
     <>
@@ -318,19 +374,36 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 w-full mb-24 transition-all duration-500">
                 {displayedContent.map((item) => (
                   <div key={item.id} className="animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both">
-                    <NewsCard
-                      id={item.id}
-                      toolName={item.title}
-                      company={item.subtitle}
-                      summary={item.description}
-                      link={item.link}
-                      date={item.date}
-                      hasComments={(commentCounts[item.id] || 0) > 0}
-                      onCommentClick={handleCommentClick}
-                      isRadar={(item as any).isRadar}
-                      upvotesCount={(item as any).upvotesCount}
-                      verified={(item as any).verified}
-                    />
+                    {item.type === 'job' ? (
+                      <JobCard 
+                        id={item.id}
+                        title={item.title}
+                        company={item.subtitle}
+                        description={item.description}
+                        location={(item as any).location}
+                        jobType={(item as any).jobType}
+                        date={item.date}
+                        founderId={(item as any).founderId}
+                        onMessageClick={handleMessageClick}
+                      />
+                    ) : (
+                      <NewsCard
+                        id={item.id}
+                        toolName={item.title}
+                        company={item.subtitle}
+                        summary={item.description}
+                        link={item.link}
+                        date={item.date}
+                        hasComments={(commentCounts[item.id] || 0) > 0}
+                        onCommentClick={handleCommentClick}
+                        isRadar={(item as any).isRadar}
+                        upvotesCount={(item as any).upvotesCount}
+                        verified={(item as any).verified}
+                        initialLiked={(item as any).isLiked}
+                        founderId={(item as any).founderId}
+                        onMessageClick={handleMessageClick}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -377,6 +450,13 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
         }} 
         targetId={selectedItem?.id || ""} 
         targetTitle={selectedItem?.title || ""} 
+      />
+
+      <MessageModal 
+        isOpen={!!selectedRecipient}
+        onClose={() => setSelectedRecipient(null)}
+        recipientId={selectedRecipient?.id || ""}
+        recipientName={selectedRecipient?.name || ""}
       />
     </>
   );
