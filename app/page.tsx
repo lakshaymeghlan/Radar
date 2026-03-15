@@ -6,6 +6,8 @@ import { ObjectId } from 'mongodb';
 import { Cpu, Sparkles, Globe } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 async function getNews(): Promise<NewsItem[]> {
   try {
     const db = await getDb();
