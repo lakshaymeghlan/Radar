@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { Navbar } from "@/components/navbar";
-import { Loader2, Send, User, MessageSquare, Search, ArrowLeft, MoreVertical, Paperclip } from "lucide-react";
+import { Loader2, Send, User, MessageSquare, Search, ArrowLeft, MoreVertical, Paperclip, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { ProfilePreviewModal } from "@/components/profile-preview-modal";
 
 export default function InboxPage() {
   const { user } = useAuth();
@@ -17,6 +18,8 @@ export default function InboxPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewUser, setPreviewUser] = useState<any>(null);
 
   useEffect(() => {
     fetchConversations();
@@ -180,12 +183,18 @@ export default function InboxPage() {
           {selectedConv ? (
             <>
               {/* Chat Header */}
-              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-10">
-                <div className="flex items-center gap-4">
-                  <button onClick={() => setSelectedConv(null)} className="md:hidden p-2 -ml-2 text-slate-400">
+              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl z-20">
+                <div 
+                  className="flex items-center gap-4 cursor-pointer group"
+                  onClick={() => {
+                    setPreviewUser(selectedConv.otherUser);
+                    setIsPreviewOpen(true);
+                  }}
+                >
+                  <button onClick={(e) => { e.stopPropagation(); setSelectedConv(null); }} className="md:hidden p-2 -ml-2 text-slate-400">
                     <ArrowLeft className="w-5 h-5" />
                   </button>
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 overflow-hidden">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 overflow-hidden group-hover:ring-2 ring-indigo-500/30 transition-all">
                      {selectedConv.otherUser?.avatar ? (
                         <img src={selectedConv.otherUser.avatar} alt="" className="w-full h-full object-cover" />
                       ) : (
@@ -195,8 +204,11 @@ export default function InboxPage() {
                       )}
                   </div>
                   <div>
-                    <h2 className="font-bold text-sm">{selectedConv.otherUser?.name}</h2>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black leading-none">Online</p>
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-bold text-sm group-hover:text-indigo-500 transition-colors">{selectedConv.otherUser?.name}</h2>
+                      <Sparkles className="w-3 h-3 text-indigo-500" />
+                    </div>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black leading-none">View Profile Context</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -282,6 +294,12 @@ export default function InboxPage() {
         </div>
 
       </div>
+
+      <ProfilePreviewModal 
+        isOpen={isPreviewOpen} 
+        onClose={() => setIsPreviewOpen(false)} 
+        user={previewUser} 
+      />
     </main>
   );
 }

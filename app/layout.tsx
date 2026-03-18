@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import AiAssistant from "@/components/ai-assistant";
+import { OnboardingModal } from "@/components/onboarding-modal";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
@@ -42,6 +44,7 @@ export default function RootLayout({
               {children}
             </main>
             <AiAssistant />
+            <OnboardingModal />
             <Toaster position="bottom-right" />
           </AuthProvider>
         </ThemeProvider>
