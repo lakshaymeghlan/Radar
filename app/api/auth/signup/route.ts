@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       id: result.insertedId.toString(),
       name,
       email,
+      role: undefined,
     };
 
     await login(user);

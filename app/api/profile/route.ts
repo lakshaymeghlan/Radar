@@ -29,7 +29,10 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const { name, bio, tagline, avatar, location, socials } = await request.json();
+    const { 
+      name, bio, tagline, avatar, location, socials, 
+      achievements, status, links, projects, education, identityTags 
+    } = await request.json();
     const db = await getDb();
 
     const result = await db.collection("users").updateOne(
@@ -42,6 +45,12 @@ export async function PUT(request: Request) {
           avatar,
           location,
           socials,
+          achievements,
+          status,
+          links,
+          projects,
+          education,
+          identityTags,
           updatedAt: new Date(),
         },
       }
