@@ -25,8 +25,9 @@ async function getToolBySlug(slug: string) {
   };
 }
 
-export default async function ToolDetailsPage({ params }: { params: { slug: string } }) {
-  const tool = await getToolBySlug(params.slug);
+export default async function ToolDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const tool = await getToolBySlug(slug);
 
   if (!tool) {
     notFound();
