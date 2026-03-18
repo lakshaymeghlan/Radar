@@ -2,13 +2,15 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { NewsCard } from '@/components/ui/news-card';
-import { Sparkles, LayoutGrid, Plus, Cpu, Code2, Rocket, ArrowRight } from 'lucide-react';
+import { Sparkles, LayoutGrid, Plus, Cpu, Code2, Rocket, ArrowRight, BriefcaseBusiness } from 'lucide-react';
 import WarpShaderHero from '@/components/ui/wrap-shader';
 import { CommentModal } from './comment-modal';
 import { RadarModal } from './radar-modal';
 import { MessageModal } from './message-modal';
 import { useAuth } from './auth-provider';
 import { JobCard } from './ui/job-card';
+import { useRequireAuth } from '@/lib/hooks/use-require-auth';
+import { ApplicationModal } from './application-modal';
 
 export interface NewsItem {
 // ... existing ...
@@ -66,6 +68,7 @@ const JOB_CATEGORIES = ['All', 'Full-time', 'Part-time', 'Contract', 'Remote', '
 
 export function ContentExplorer({ initialNews, initialStartups }: ContentExplorerProps) {
   const { user } = useAuth();
+  const { requireAuth } = useRequireAuth();
   const [mode, setMode] = useState<'updates' | 'startups' | 'jobs'>('updates');
   const [startupSubMode, setStartupSubMode] = useState<'curated' | 'radar'>('radar');
   const [radarStartups, setRadarStartups] = useState<StartupItem[]>([]);
@@ -77,6 +80,13 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
   const [isLoadingRadar, setIsLoadingRadar] = useState(false);
   const [isRadarModalOpen, setIsRadarModalOpen] = useState(false);
   const [selectedRecipient, setSelectedRecipient] = useState<{ id: string; name: string } | null>(null);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<{ id: string; title: string; company: string } | null>(null);
+
+  const handleApplyClick = (jobId: string, jobTitle: string, company: string) => {
+    setSelectedJob({ id: jobId, title: jobTitle, company: company });
+    setIsApplicationModalOpen(true);
+  };
 
   const handleMessageClick = (targetId: string, founderId: string) => {
     // We need to find the founder's name. For simplicity if we don't have it, we show "Founder"
@@ -257,23 +267,29 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
 
   return (
     <>
-      <WarpShaderHero onModeChange={handleModeChange} activeMode={mode} />
+      <WarpShaderHero onModeChange={handleModeChange} activeMode={mode} userRole={user?.role} />
 
-      <section id="content-section" className="max-w-7xl mx-auto px-6 py-24 transition-opacity duration-500">
+      <section 
+        id="content-section" 
+        className="max-w-7xl mx-auto px-6 py-24 transition-opacity duration-500"
+        suppressHydrationWarning
+      >
         <div className="flex flex-col space-y-16 mb-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
             <div className="space-y-6">
               <div className="flex items-center gap-3 text-primary dark:text-emerald-400">
                 <div className="p-2 bg-primary/5 dark:bg-emerald-500/10 rounded-xl">
-                  {mode === 'updates' ? <Rocket className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                  {mode === 'updates' ? <Rocket className="w-4 h-4" /> : (mode === 'jobs' ? <BriefcaseBusiness className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />)}
                 </div>
                 <span className="text-[12px] font-black tracking-[0.3em] uppercase tracking-widest">
-                  {mode === 'updates' ? 'Evolution Stream' : 'Venture Radar'}
+                  {mode === 'updates' ? 'Evolution Stream' : (mode === 'jobs' ? 'Opportunity Flow' : 'Venture Radar')}
                 </span>
               </div>
               <h2 className="text-5xl md:text-7xl font-sans font-light text-foreground dark:text-white tracking-tighter leading-none animate-in fade-in duration-700">
                 {mode === 'updates' ? (
                   <>Recent AI <span className="font-serif italic text-primary dark:text-emerald-400 dark:text-glow">Updates</span></>
+                ) : mode === 'jobs' ? (
+                  <>Open <span className="font-serif italic text-primary dark:text-emerald-400 dark:text-glow">Roles</span></>
                 ) : (
                   <>Recent <span className="font-serif italic text-primary dark:text-emerald-400 dark:text-glow">Startups</span></>
                 )}
@@ -304,9 +320,9 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                     </button>
                   </div>
 
-                  {startupSubMode === 'radar' && user && (
+                  {startupSubMode === 'radar' && (
                     <button
-                      onClick={() => setIsRadarModalOpen(true)}
+                      onClick={() => requireAuth(() => setIsRadarModalOpen(true))}
                       className="group flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/20"
                     >
                       <Plus className="w-4 h-4" />
@@ -371,7 +387,10 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
         <div className="min-h-[400px] flex flex-col items-center">
           {displayedContent.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 w-full mb-24 transition-all duration-500">
+              <div 
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 w-full mb-24 transition-all duration-500"
+                suppressHydrationWarning
+              >
                 {displayedContent.map((item) => (
                   <div key={item.id} className="animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both">
                     {item.type === 'job' ? (
@@ -385,6 +404,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                         date={item.date}
                         founderId={(item as any).founderId}
                         onMessageClick={handleMessageClick}
+                        onApplyClick={() => handleApplyClick(item.id, item.title, item.subtitle)}
                       />
                     ) : (
                       <NewsCard
@@ -457,6 +477,14 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
         onClose={() => setSelectedRecipient(null)}
         recipientId={selectedRecipient?.id || ""}
         recipientName={selectedRecipient?.name || ""}
+      />
+
+      <ApplicationModal 
+        isOpen={isApplicationModalOpen}
+        onClose={() => setIsApplicationModalOpen(false)}
+        jobId={selectedJob?.id || ""}
+        jobTitle={selectedJob?.title || ""}
+        companyName={selectedJob?.company || ""}
       />
     </>
   );

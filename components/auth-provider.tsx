@@ -10,6 +10,20 @@ interface User {
   bio?: string;
   tagline?: string;
   location?: string;
+  role?: 'builder' | 'explorer';
+  // Rich Profile Fields
+  links?: Array<{ label: string; url: string }>;
+  achievements?: string;
+  status?: 'student' | 'professional' | string;
+  projects?: Array<{ title: string; url: string; description?: string }>;
+  education?: string;
+  identityTags?: string[];
+  socials?: {
+    website?: string;
+    twitter?: string;
+    github?: string;
+    linkedin?: string;
+  };
 }
 
 interface AuthContextType {

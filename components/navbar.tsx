@@ -23,6 +23,10 @@ export const Navbar = () => {
 
   useEffect(() => {
     setLastSync(new Date().toLocaleTimeString());
+
+    const openModal = () => setIsAuthModalOpen(true);
+    window.addEventListener("open-auth-modal", openModal);
+    return () => window.removeEventListener("open-auth-modal", openModal);
   }, []);
 
   const handleSync = async () => {
@@ -47,8 +51,11 @@ export const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 z-[100] w-full px-6 py-4 transition-all duration-700">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-3 rounded-full bg-white/70 dark:bg-slate-950/80 backdrop-blur-xl border border-white/40 dark:border-emerald-500/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] dark:shadow-emerald-500/10 transition-all">
-          <div className="flex items-center gap-10">
+        <div 
+          className="max-w-7xl mx-auto flex items-center justify-between px-8 py-3 rounded-full bg-white/70 dark:bg-slate-950/80 backdrop-blur-xl border border-white/40 dark:border-emerald-500/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] dark:shadow-emerald-500/10 transition-all"
+          suppressHydrationWarning
+        >
+          <div className="flex items-center gap-10" suppressHydrationWarning>
             <Link href="/" className="flex items-center gap-2 group shrink-0">
               <div className="w-9 h-9 rounded-lg bg-slate-900 dark:bg-emerald-500 flex items-center justify-center text-white p-1.5 group-hover:scale-110 transition-all duration-500 dark:shadow-[0_0_15px_rgba(16,185,129,0.5)]">
                 <RadarLogo className="w-full h-full" color="white" />
@@ -63,14 +70,21 @@ export const Navbar = () => {
                  Learn AI
               </Link>
               {user && (
-                <Link href="/inbox" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                  Inbox
-                </Link>
+                <>
+                  <Link href="/inbox" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                    Inbox
+                  </Link>
+                  {user.role === 'builder' && (
+                    <Link href="/profile" className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors">
+                      Applicants
+                    </Link>
+                  )}
+                </>
               )}
             </div>
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6" suppressHydrationWarning>
             <ThemeToggle />
             
             {lastSync && (
