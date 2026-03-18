@@ -1,8 +1,9 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowRight, MessageSquare, Heart, CheckCircle2, MessageCircle } from 'lucide-react';
+import { ArrowRight, MessageSquare, Heart, CheckCircle2, MessageCircle, User } from 'lucide-react';
 import Link from 'next/link';
+import { useRequireAuth } from '@/lib/hooks/use-require-auth';
 
 interface NewsCardProps {
   id: string;
@@ -44,20 +45,24 @@ export const NewsCard: React.FC<NewsCardProps> = ({
     setIsUpvoted(initialLiked);
   }, [initialLiked]);
 
+  const { requireAuth } = useRequireAuth();
+
   const handleUpvote = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isRadar) return;
 
-    try {
-      const res = await fetch(`/api/radar-startups/${id}/upvote`, { method: "POST" });
-      const data = await res.json();
-      if (res.ok) {
-        setUpvotes(prev => data.upvoted ? prev + 1 : prev - 1);
-        setIsUpvoted(data.upvoted);
+    requireAuth(async () => {
+      try {
+        const res = await fetch(`/api/radar-startups/${id}/upvote`, { method: "POST" });
+        const data = await res.json();
+        if (res.ok) {
+          setUpvotes(prev => data.upvoted ? prev + 1 : prev - 1);
+          setIsUpvoted(data.upvoted);
+        }
+      } catch (e) {
+        console.error("Upvote failed");
       }
-    } catch (e) {
-      console.error("Upvote failed");
-    }
+    });
   };
 
   const formattedDate = new Intl.DateTimeFormat('en-US', {
@@ -69,9 +74,22 @@ export const NewsCard: React.FC<NewsCardProps> = ({
     <Card className="bg-white dark:bg-slate-950 rounded-[32px] border border-slate-100/50 dark:border-slate-800 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.12)] transition-all duration-700 flex flex-col h-full group overflow-hidden hover:-translate-y-2 border-b-4 hover:border-b-teal-500/20 dark:hover:border-b-emerald-500/10">
       <CardHeader className="pb-4 pt-8 px-8">
         <div className="flex justify-between items-center mb-6">
-          <Badge className="bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-100 dark:border-slate-800 font-black text-[9px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full group-hover:bg-teal-50 dark:group-hover:bg-emerald-500/10 group-hover:text-teal-600 dark:group-hover:text-emerald-400 transition-colors duration-500">
-            {company}
-          </Badge>
+          <div className="flex items-center gap-3">
+            {founderId ? (
+              <Link href={`/founders/${founderId}`} className="flex items-center gap-2 group/founder">
+                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover/founder:text-emerald-500 group-hover/founder:bg-emerald-500/10 transition-all border border-slate-200 dark:border-slate-800">
+                  <User className="w-3.5 h-3.5" />
+                </div>
+                <Badge className="cursor-pointer bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-100 dark:border-slate-800 font-black text-[9px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full group-hover:bg-teal-50 dark:group-hover:bg-emerald-500/10 group-hover:text-teal-600 dark:group-hover:text-emerald-400 transition-colors duration-500">
+                  {company}
+                </Badge>
+              </Link>
+            ) : (
+              <Badge className="bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-100 dark:border-slate-800 font-black text-[9px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full group-hover:bg-teal-50 dark:group-hover:bg-emerald-500/10 group-hover:text-teal-600 dark:group-hover:text-emerald-400 transition-colors duration-500">
+                {company}
+              </Badge>
+            )}
+          </div>
           <div className="flex items-center gap-4">
             {isRadar && (
               <button 
@@ -90,7 +108,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               <button 
                 onClick={(e) => {
                   e.preventDefault();
-                  onMessageClick(id, founderId);
+                  requireAuth(() => onMessageClick(id, founderId));
                 }}
                 className="p-2 rounded-full text-slate-300 dark:text-slate-600 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all duration-500"
                 title="Message Founder"
@@ -101,7 +119,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
             <button 
               onClick={(e) => {
                 e.preventDefault();
-                onCommentClick(id, toolName);
+                requireAuth(() => onCommentClick(id, toolName));
               }}
               className={`relative p-2 rounded-full transition-all duration-500 ${
                 hasComments 
