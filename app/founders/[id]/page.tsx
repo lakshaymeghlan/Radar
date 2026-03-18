@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
+import { toast } from "sonner";
 
 export default function FounderProfilePage() {
   const params = useParams();
