@@ -185,33 +185,51 @@ export default function ProfilePage() {
               <div className="h-24 bg-gradient-to-r from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-800" />
               <CardContent className="relative pt-12 pb-6 px-6 text-center">
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-2xl border-4 border-white dark:border-slate-950 bg-slate-100 dark:bg-slate-900 overflow-hidden shadow-xl">
-                  {profile?.avatar ? (
-                    <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
+                  {profile?.image || profile?.avatar ? (
+                    <img 
+                      src={profile.image || profile.avatar} 
+                      alt={profile.name} 
+                      className="w-full h-full object-cover" 
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800">
                       <User className="w-10 h-10 text-slate-400" />
                     </div>
                   )}
                 </div>
-                <h2 className="text-2xl font-bold mb-1">{profile?.name}</h2>
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <p className="text-sm text-slate-500 dark:text-emerald-500/70 font-medium uppercase tracking-wider">
-                    {profile?.tagline || "Early Stage Founder"}
-                  </p>
-                  <div className="flex gap-2">
-                    {profile?.role && (
-                      <Badge className={`${profile.role === 'builder' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-teal-500/10 text-teal-600'} border-transparent text-[8px] px-2 py-0.5 uppercase tracking-widest`}>
-                        {profile.role}
-                      </Badge>
-                    )}
-                    {profile?.identityTags?.map((tag: string) => (
-                      <Badge key={tag} className="bg-indigo-500/10 text-indigo-600 border-transparent text-[8px] px-2 py-0.5 uppercase tracking-widest">
-                        {tag}
-                      </Badge>
-                    ))}
-                    {myStartups.length > 0 && (
-                      <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[8px] px-2 py-0.5">Verified Founder</Badge>
-                    )}
+                <div className="flex flex-col items-center gap-4 mt-2">
+                  <h2 className="text-2xl font-bold">{profile?.name}</h2>
+                  
+                  {/* Role Toggle */}
+                  <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-emerald-500/10 shadow-sm">
+                    <button 
+                      onClick={async () => {
+                        // Optimistic update
+                        setProfile({ ...profile, role: 'builder' });
+                        window.dispatchEvent(new CustomEvent('switch-role', { detail: 'builder' }));
+                      }}
+                      className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                        profile?.role === 'builder' ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl' : 'text-slate-400 hover:text-slate-900'
+                      }`}
+                    >
+                      Builder
+                    </button>
+                    <button 
+                      onClick={async () => {
+                        // Optimistic update
+                        setProfile({ ...profile, role: 'explorer' });
+                        window.dispatchEvent(new CustomEvent('switch-role', { detail: 'explorer' }));
+                      }}
+                      className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                        profile?.role === 'explorer' ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl' : 'text-slate-400 hover:text-slate-900'
+                      }`}
+                    >
+                      Explorer
+                    </button>
                   </div>
                 </div>
               </CardContent>

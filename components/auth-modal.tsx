@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Mail, Lock, User, Loader2 } from "lucide-react";
-import { useAuth } from "./auth-provider";
+import { X, Loader2, Github, Linkedin, Chrome } from "lucide-react";
+// We'll use signIn from next-auth/react
+import { signIn } from "next-auth/react";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -10,141 +11,88 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const { login: setAuthUser } = useAuth();
+  const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
-    const body = isLogin ? { email, password } : { name, email, password };
-
+  const handleOAuthLogin = async (provider: string) => {
+    setLoadingProvider(provider);
     try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setAuthUser(data.user);
-        onClose();
-      } else {
-        setError(data.error || "An error occurred");
-      }
+      await signIn(provider, { callbackUrl: window.location.origin });
     } catch (err) {
-      setError("Failed to connect to server");
+      console.error("Failed to sign in:", err);
     } finally {
-      setLoading(false);
+      // For OAuth providers, the page usually redirects, but we clear state just in case
+      setTimeout(() => setLoadingProvider(null), 5000);
     }
   };
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="relative w-full max-w-md p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-md p-10 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+          className="absolute top-8 right-8 p-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
-            {isLogin ? "Welcome Back" : "Create Account"}
+        <div className="mb-12 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-slate-950 dark:bg-emerald-500 flex items-center justify-center text-white text-3xl mx-auto mb-8 shadow-2xl">
+            B
+          </div>
+          <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight leading-none">
+            Claim Your Identity
           </h2>
-          <p className="text-slate-500 dark:text-slate-400">
-            {isLogin ? "Log in to your account to continue" : "Join the AI Launch Radar community"}
+          <p className="text-slate-500 dark:text-slate-400 text-lg font-light">
+            Join the ecosystem of India&apos;s <span className="text-slate-900 dark:text-white font-medium">early-stage builders.</span>
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="John Doe"
-                  className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 transition-all outline-none text-slate-900 dark:text-white"
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 transition-all outline-none text-slate-900 dark:text-white"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-slate-900 dark:focus:ring-emerald-500 transition-all outline-none text-slate-900 dark:text-white"
-              />
-            </div>
-          </div>
-
-          {error && (
-            <p className="text-sm font-medium text-rose-500 bg-rose-50 dark:bg-rose-500/10 p-3 rounded-xl border border-rose-200 dark:border-rose-500/20">
-              {error}
-            </p>
-          )}
-
+        <div className="space-y-4">
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 bg-slate-900 dark:bg-emerald-500 hover:bg-slate-800 dark:hover:bg-emerald-400 text-white font-bold rounded-2xl shadow-lg shadow-slate-200 dark:shadow-emerald-500/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            onClick={() => handleOAuthLogin("google")}
+            disabled={!!loadingProvider}
+            className="w-full py-4 px-6 bg-white dark:bg-slate-950 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-bold flex items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm group"
           >
-            {loading ? (
+            {loadingProvider === "google" ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              isLogin ? "Sign In" : "Create Account"
+              <Chrome className="w-5 h-5 group-hover:scale-110 transition-transform" />
             )}
+            <span className="tracking-wide">Continue with Google</span>
           </button>
-        </form>
 
-        <div className="mt-8 text-center">
           <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-emerald-500 transition-colors"
+            onClick={() => handleOAuthLogin("linkedin")}
+            disabled={!!loadingProvider}
+            className="w-full py-4 px-6 bg-[#0077b5] text-white rounded-2xl font-bold flex items-center justify-center gap-4 hover:opacity-90 transition-all shadow-lg shadow-[#0077b5]/10 group"
           >
-            {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+            {loadingProvider === "linkedin" ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform fill-white" />
+            )}
+            <span className="tracking-wide">Continue with LinkedIn</span>
+          </button>
+
+          <button
+            onClick={() => handleOAuthLogin("github")}
+            disabled={!!loadingProvider}
+            className="w-full py-4 px-6 bg-slate-900 dark:border dark:border-slate-800 text-white rounded-2xl font-bold flex items-center justify-center gap-4 hover:bg-slate-800 transition-all shadow-lg group"
+          >
+            {loadingProvider === "github" ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            )}
+            <span className="tracking-wide">Continue with GitHub</span>
           </button>
         </div>
+
+        <p className="mt-12 text-center text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] font-black">
+          No password required — join securely.
+        </p>
       </div>
     </div>
   );

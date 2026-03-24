@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Radar | The Home for AI Indie Builders",
-  description: "A premium directory and launchpad for the next generation of AI startups and indie tools.",
+  title: "Builds | The Home for Early-Stage Builders",
+  description: "A startup ecosystem for early-stage builders. Post your startup, find your co-founder, and hire your first engineer.",
 };
 
 export default function RootLayout({

@@ -7,11 +7,11 @@ export const RadarLogo = ({ className = "h-6 w-6", color = "currentColor" }) => 
     xmlns="http://www.w3.org/2000/svg" 
     className={className}
   >
-    {/* The "R" - Geometric and Modern */}
+    {/* The B - Geometric and Modern */}
     <path 
-      d="M8 20V4H14C16.5 4 18.5 6 18.5 8.5C18.5 11 16.5 13 14 13H8M14 13L19 20" 
+      d="M8 4V20H14C17 20 19 18 19 15.5C19 13 17 11 14 11H8M14 11C16.5 11 18 9.5 18 7.5C18 5.5 16.5 4 14 4H8" 
       stroke={color} 
-      strokeWidth="3" 
+      strokeWidth="3.5" 
       strokeLinecap="round" 
       strokeLinejoin="round"
     />

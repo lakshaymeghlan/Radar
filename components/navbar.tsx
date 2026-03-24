@@ -57,28 +57,45 @@ export const Navbar = () => {
         >
           <div className="flex items-center gap-10" suppressHydrationWarning>
             <Link href="/" className="flex items-center gap-2 group shrink-0">
-              <div className="w-9 h-9 rounded-lg bg-slate-900 dark:bg-emerald-500 flex items-center justify-center text-white p-1.5 group-hover:scale-110 transition-all duration-500 dark:shadow-[0_0_15px_rgba(16,185,129,0.5)]">
-                <RadarLogo className="w-full h-full" color="white" />
+              <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-emerald-500 flex items-center justify-center text-white font-black text-2xl group-hover:scale-110 transition-all duration-500 dark:shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                B
               </div>
-              <span className="text-xl font-bold tracking-tighter text-slate-900 dark:text-white dark:text-glow">
-                Radar
+              <span className="text-2xl font-bold tracking-tighter text-slate-900 dark:text-white dark:text-glow">
+                Builds
               </span>
             </Link>
 
             <div className="hidden md:flex items-center gap-6">
-              <Link href="/learn" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                 Learn AI
-              </Link>
-              {user && (
+              {user ? (
                 <>
                   <Link href="/inbox" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                     Inbox
                   </Link>
-                  {user.role === 'builder' && (
-                    <Link href="/profile" className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors">
-                      Applicants
-                    </Link>
+                  {user.role === 'builder' ? (
+                    <>
+                      <Link href="/profile#startups" className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors">
+                        My Startups
+                      </Link>
+                      <Link href="/profile#applicants" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                        Applicants
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/#content-section" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                        Browse Startups
+                      </Link>
+                      <Link href="/#content-section" className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors">
+                        Find Jobs
+                      </Link>
+                    </>
                   )}
+                </>
+              ) : (
+                <>
+                  <Link href="/#content-section" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                    Browse Startups
+                  </Link>
                 </>
               )}
             </div>
@@ -131,16 +148,21 @@ export const Navbar = () => {
                   href="/profile"
                   className="flex items-center gap-2 group px-2 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-900 transition-all font-bold text-slate-900 dark:text-white"
                 >
-                  <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-slate-600 dark:text-emerald-500 border border-slate-300 dark:border-emerald-500/30 overflow-hidden">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                  <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-emerald-500/20 flex items-center justify-center text-[10px] font-bold text-slate-600 dark:text-emerald-500 border border-slate-300 dark:border-emerald-500/30 overflow-hidden shadow-sm">
+                    {user.image || user.avatar ? (
+                      <img 
+                        src={user.image || user.avatar} 
+                        alt={user.name} 
+                        className="w-full h-full object-cover" 
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
                     ) : (
                       user.name.charAt(0).toUpperCase()
                     )}
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 hidden sm:block">
-                    {user.name.split(' ')[0]}
-                  </span>
                 </Link>
 
                 <button 

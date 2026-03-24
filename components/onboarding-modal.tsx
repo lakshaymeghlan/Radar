@@ -43,11 +43,11 @@ export const OnboardingModal = () => {
 
         <div className="relative text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-sans font-light text-slate-900 dark:text-white mb-4 tracking-tighter">
-            How do you want to <br />
-            <span className="font-serif italic text-emerald-500">use Radar?</span>
+            How do you want up to <br />
+            <span className="font-serif italic text-emerald-500">use Builds?</span>
           </h2>
           <p className="text-slate-500 dark:text-slate-400 font-light text-lg">
-            Elevate your journey in the AI-powered ecosystem.
+            Join the ecosystem of early-stage builders.
           </p>
         </div>
 
@@ -63,10 +63,10 @@ export const OnboardingModal = () => {
             </div>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight group-hover:text-emerald-500 transition-colors">Builder</h3>
             <p className="text-slate-500 dark:text-slate-400 font-light text-sm leading-relaxed mb-6">
-              You create, hire, and launch. Manage your startups and find the best talent.
+              Post your startup, find your first hires, and build in public.
             </p>
-            <div className="mt-auto px-4 py-2 rounded-full bg-slate-200/50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
-              Creates • Hires • Launches
+            <div className="mt-auto px-4 py-2 rounded-full bg-emerald-500/10 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+              Post • Hire • Build
             </div>
           </button>
 
@@ -81,10 +81,10 @@ export const OnboardingModal = () => {
             </div>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight group-hover:text-teal-500 transition-colors">Explorer</h3>
             <p className="text-slate-500 dark:text-slate-400 font-light text-sm leading-relaxed mb-6">
-              You discover, apply, and learn. Explore startups and connect with founders.
+              Discover early startups, apply before LinkedIn, and join meaningful teams.
             </p>
-            <div className="mt-auto px-4 py-2 rounded-full bg-slate-200/50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
-              Discovers • Applies • Learns
+            <div className="mt-auto px-4 py-2 rounded-full bg-teal-500/10 text-[10px] font-black uppercase tracking-widest text-teal-600 dark:text-teal-400">
+              Discover • Apply • Join
             </div>
           </button>
         </div>

@@ -7,6 +7,7 @@ interface User {
   name: string;
   email: string;
   avatar?: string;
+  image?: string;
   bio?: string;
   tagline?: string;
   location?: string;
@@ -26,6 +27,8 @@ interface User {
   };
 }
 
+import { SessionProvider, useSession, signOut } from "next-auth/react";
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -36,44 +39,79 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AuthInnerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { data: session, status } = useSession();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const checkSession = async () => {
-    try {
-      const res = await fetch("/api/auth/me");
-      const data = await res.json();
-      if (data.user) {
-        setUser(data.user);
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error("Failed to check session:", error);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    checkSession();
-  }, []);
+    const handleRoleSwitch = async (e: any) => {
+      const newRole = e.detail;
+      if (user && user.role !== newRole) {
+        // Optimistic update
+        setUser({ ...user, role: newRole });
+        
+        try {
+          await fetch('/api/auth/onboarding', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role: newRole }),
+          });
+        } catch (err) {
+          console.error("Failed to switch role on server:", err);
+        }
+      }
+    };
+
+    window.addEventListener('switch-role', handleRoleSwitch);
+    return () => window.removeEventListener('switch-role', handleRoleSwitch);
+  }, [user]);
+
+  useEffect(() => {
+    if (session?.user) {
+      setUser({
+        id: (session.user as any).id || "",
+        name: session.user.name || "",
+        email: session.user.email || "",
+        avatar: session.user.image || undefined,
+        image: session.user.image || undefined,
+        role: (session.user as any).role || undefined,
+      } as User);
+    } else {
+      setUser(null);
+    }
+  }, [session]);
 
   const login = (userData: User) => {
     setUser(userData);
   };
 
   const logout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await signOut({ redirect: false });
     setUser(null);
   };
 
+  const checkSession = async () => {
+    // This is now handled by useSession from next-auth
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, checkSession }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading: status === "loading", 
+      login, 
+      logout, 
+      checkSession 
+    }}>
       {children}
     </AuthContext.Provider>
+  );
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <SessionProvider>
+      <AuthInnerProvider>{children}</AuthInnerProvider>
+    </SessionProvider>
   );
 };
 

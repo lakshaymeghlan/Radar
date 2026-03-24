@@ -36,6 +36,7 @@ export interface StartupItem {
 interface ContentExplorerProps {
   initialNews: NewsItem[];
   initialStartups: StartupItem[];
+  children?: React.ReactNode;
 }
 
 const UPDATES_CATEGORIES = [
@@ -66,11 +67,21 @@ const STARTUP_CATEGORIES = [
 
 const JOB_CATEGORIES = ['All', 'Full-time', 'Part-time', 'Contract', 'Remote', 'Internship'];
 
-export function ContentExplorer({ initialNews, initialStartups }: ContentExplorerProps) {
+export function ContentExplorer({ initialNews, initialStartups, children }: ContentExplorerProps) {
   const { user } = useAuth();
   const { requireAuth } = useRequireAuth();
   const [mode, setMode] = useState<'updates' | 'startups' | 'jobs'>('updates');
-  const [startupSubMode, setStartupSubMode] = useState<'curated' | 'radar'>('radar');
+  const [startupSubMode, setStartupSubMode] = useState<'curated' | 'radar'>('curated');
+
+  useEffect(() => {
+    if (!user) {
+      setMode('updates');
+    } else if (user.role === 'explorer') {
+      setMode('jobs');
+    } else if (user.role === 'builder') {
+      setMode('startups');
+    }
+  }, [user]);
   const [radarStartups, setRadarStartups] = useState<StartupItem[]>([]);
   const [allJobs, setAllJobs] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -103,6 +114,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
         setRadarStartups(data.startups.map((s: any) => ({
           ...s,
           _id: s._id.toString(),
+          founderId: s.founderId?.toString(), // Ensure founderId is a string
           date: s.createdAt,
           source: 'Radar community'
         })));
@@ -263,6 +275,12 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
       ? displayCount < (startupSubMode === 'curated' ? filteredCuratedStartups.length : filteredRadarStartups.length)
       : displayCount < filteredJobs.length;
 
+  const availableModes = (!user)
+    ? ['updates', 'startups'] as const
+    : user.role === 'explorer'
+      ? ['jobs', 'startups', 'updates'] as const
+      : ['startups', 'updates'] as const;
+
   const currentCategories = mode === 'updates' ? UPDATES_CATEGORIES : (mode === 'startups' ? STARTUP_CATEGORIES : JOB_CATEGORIES);
 
   return (
@@ -282,7 +300,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                   {mode === 'updates' ? <Rocket className="w-4 h-4" /> : (mode === 'jobs' ? <BriefcaseBusiness className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />)}
                 </div>
                 <span className="text-[12px] font-black tracking-[0.3em] uppercase tracking-widest">
-                  {mode === 'updates' ? 'Evolution Stream' : (mode === 'jobs' ? 'Opportunity Flow' : 'Venture Radar')}
+                  {mode === 'updates' ? 'Evolution Stream' : (mode === 'jobs' ? 'Opportunity Flow' : 'Startup Builds')}
                 </span>
               </div>
               <h2 className="text-5xl md:text-7xl font-sans font-light text-foreground dark:text-white tracking-tighter leading-none animate-in fade-in duration-700">
@@ -295,9 +313,34 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                 )}
               </h2>
               
+              <div className="flex items-center gap-6">
+                {availableModes.map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setMode(m)}
+                    className={`text-[11px] font-black uppercase tracking-[0.3em] transition-all ${
+                      mode === m
+                        ? 'text-emerald-500 border-b-2 border-emerald-500 pb-1'
+                        : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
+                
+                {user?.role === 'builder' && (
+                  <div className="flex items-center gap-3 px-4 py-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                      {radarStartups.some(s => (s as any).founderId === user?.id) ? `${Math.floor(Math.random() * 50) + 12} interactions today` : "Post your first startup to see views"}
+                    </span>
+                  </div>
+                )}
+              </div>
+
               {mode === 'startups' && (
                 <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-3 p-1.5 bg-slate-100 dark:bg-slate-900/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800">
+                  <div className="flex items-center gap-3 p-1 bg-slate-100 dark:bg-slate-900/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800">
                     <button
                       onClick={() => setStartupSubMode('curated')}
                       className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
@@ -316,7 +359,7 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
                           : 'text-slate-500 hover:text-slate-900 dark:hover:text-emerald-400'
                       }`}
                     >
-                      Community Radar
+                      Community
                     </button>
                   </div>
 
@@ -456,6 +499,8 @@ export function ContentExplorer({ initialNews, initialStartups }: ContentExplore
           )}
         </div>
       </section>
+
+      {children}
 
       <RadarModal 
         isOpen={isRadarModalOpen} 

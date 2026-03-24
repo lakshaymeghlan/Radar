@@ -1,30 +1,36 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/mongodb";
-import { getSession } from "@/lib/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { ObjectId } from "mongodb";
 
 export async function GET() {
-  const session = await getSession();
-  if (!session) {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const db = await getDb();
-  const user = await db.collection("users").findOne({ _id: new ObjectId(session.user.id) });
+  const user = await db.collection("users").findOne({ _id: new ObjectId((session.user as any).id) });
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  // Remove sensitive data
-  const { password, ...safeUser } = user;
+  // Ensure image is mapped to avatar for easier UI consumption
+  const safeUser = {
+    ...user,
+    avatar: user.image || user.avatar,
+    // Sensitive data removal
+    password: undefined
+  };
 
   return NextResponse.json({ user: safeUser });
 }
 
 export async function PUT(request: Request) {
-  const session = await getSession();
-  if (!session) {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

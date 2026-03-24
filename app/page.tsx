@@ -3,8 +3,7 @@ import { ContentExplorer, NewsItem, StartupItem } from '@/components/content-exp
 import { getDb } from '@/lib/mongodb';
 import { getSession } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
-import { Cpu, Sparkles, Globe } from 'lucide-react';
-import Link from 'next/link';
+import { LandingContent } from '@/components/landing-content';
 
 export const dynamic = 'force-dynamic';
 
@@ -85,57 +84,29 @@ export default async function Home() {
     <main className="min-h-screen bg-background dark:bg-[#020617] text-foreground dark:text-white selection:bg-teal-100 dark:selection:bg-emerald-500/30 selection:text-teal-900 dark:selection:text-emerald-200 transition-colors duration-700">
       <Navbar />
       
-      <ContentExplorer initialNews={news} initialStartups={startups} />
+      <ContentExplorer initialNews={news} initialStartups={startups}>
+        <LandingContent />
+      </ContentExplorer>
 
-
-      {/* Premium Stats/About Section */}
-      <section className="max-w-7xl mx-auto px-6 py-32 border-t border-border/50">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-20">
-          <div className="space-y-4">
-            <Cpu className="w-8 h-8 text-teal-600 dark:text-emerald-400" />
-            <h3 className="text-xl font-light text-foreground tracking-tight">Real-time Intelligence</h3>
-            <p className="text-muted-foreground text-sm font-light leading-relaxed">Automated signal detection across 12+ industry leading AI research laboratories.</p>
-          </div>
-          <div className="space-y-4">
-            <Sparkles className="w-8 h-8 text-teal-600 dark:text-emerald-400" />
-            <h3 className="text-xl font-light text-foreground tracking-tight">Structured Signal</h3>
-            <p className="text-muted-foreground text-sm font-light leading-relaxed">We strip away the marketing fluff to show you the functional architecture of what was launched.</p>
-          </div>
-          <div className="space-y-4">
-            <Globe className="w-8 h-8 text-teal-600 dark:text-emerald-400" />
-            <h3 className="text-xl font-light text-foreground tracking-tight">Global Reach</h3>
-            <p className="text-muted-foreground text-sm font-light leading-relaxed">Tracking launches from San Francisco to Paris, ensuring nothing escapes the radar.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border py-32 bg-secondary/20 transition-colors duration-500">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
-          <div className="mb-12">
-            <div className="w-12 h-12 rounded-2xl bg-foreground text-background flex items-center justify-center font-bold text-2xl mx-auto mb-6">
-              R
+      <footer className="border-t border-border py-20 bg-secondary/10 transition-colors duration-500">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-foreground text-background flex items-center justify-center font-bold text-xl">
+              B
             </div>
-            <span className="text-foreground font-bold text-3xl tracking-tighter">Radar</span>
+            <span className="text-foreground font-bold text-2xl tracking-tighter">Builds</span>
           </div>
           
-          <p className="text-muted-foreground text-lg font-light max-w-xl mb-16 leading-relaxed">
-            A premium, editorial-style intelligence platform tracking the rapid evolution of artificial intelligence.
-          </p>
-
-          <div className="flex flex-col items-center gap-10">
-            <div className="flex gap-12 text-[11px] text-muted-foreground uppercase tracking-[0.3em] font-black items-center">
-              <a href="#" className="hover:text-primary transition-colors">Twitter</a>
-              <a href="#" className="hover:text-primary transition-colors">Newsletter</a>
-            </div>
-
-            <div className="pt-12 border-t border-border w-full max-w-lg">
-              <p className="text-muted-foreground text-sm font-light tracking-tight">
-                Crafted with engineering excellence by <br />
-                <span className="text-foreground font-serif italic text-xl mt-2 inline-block">Lakshay meghlan</span>
-              </p>
-            </div>
+          <div className="flex gap-12 text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black items-center">
+            <a href="#" className="hover:text-primary transition-colors">Twitter</a>
+            <a href="#" className="hover:text-primary transition-colors">LinkedIn</a>
+            <a href="#" className="hover:text-primary transition-colors">GitHub</a>
           </div>
+
+          <p className="text-muted-foreground text-xs font-light tracking-tight text-center md:text-right">
+            The home for early-stage builders. <br />
+            <span className="text-foreground font-serif italic text-lg mt-2 inline-block">Lakshay meghlan</span>
+          </p>
         </div>
       </footer>
     </main>
