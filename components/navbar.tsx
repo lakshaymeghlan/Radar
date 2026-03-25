@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { RefreshCw, Check, Clock, Rocket, Bell, Briefcase } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import { RadarLogo } from './ui/radar-logo';
 
@@ -20,6 +20,27 @@ export const Navbar = () => {
   
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('mode');
+  const [currentHash, setCurrentHash] = useState('');
+
+  useEffect(() => {
+    setCurrentHash(window.location.hash);
+    const handleHashChange = () => setCurrentHash(window.location.hash);
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const isActive = (path: string, mode?: string, hash?: string) => {
+    if (mode) {
+      return pathname === path && activeTab === mode;
+    }
+    if (hash) {
+      return pathname === path && currentHash === hash;
+    }
+    return pathname === path && !activeTab && (!currentHash || currentHash === '#');
+  };
 
   useEffect(() => {
     setLastSync(new Date().toLocaleTimeString());
@@ -68,24 +89,49 @@ export const Navbar = () => {
             <div className="hidden md:flex items-center gap-6">
               {user ? (
                 <>
-                  <Link href="/inbox" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                  <Link 
+                    href="/inbox" 
+                    className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      isActive('/inbox') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
                     Inbox
                   </Link>
                   {user.role === 'builder' ? (
                     <>
-                      <Link href="/profile#startups" className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors">
+                      <Link 
+                        href="/profile#startups" 
+                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                          isActive('/profile', undefined, '#startups') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
                         My Startups
                       </Link>
-                      <Link href="/profile#applicants" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                      <Link 
+                        href="/profile#applicants" 
+                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                          isActive('/profile', undefined, '#applicants') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
                         Applicants
                       </Link>
                     </>
                   ) : (
                     <>
-                      <Link href="/#content-section" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                      <Link 
+                        href="/?mode=startups#content-section" 
+                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                          isActive('/', 'startups') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
                         Browse Startups
                       </Link>
-                      <Link href="/#content-section" className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors">
+                      <Link 
+                        href="/?mode=jobs#content-section" 
+                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                          isActive('/', 'jobs') || isActive('/') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
                         Find Jobs
                       </Link>
                     </>
@@ -93,8 +139,21 @@ export const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Link href="/#content-section" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                  <Link 
+                    href="/?mode=startups#content-section" 
+                    className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      isActive('/', 'startups') || isActive('/') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
                     Browse Startups
+                  </Link>
+                  <Link 
+                    href="/?mode=jobs#content-section" 
+                    className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      isActive('/', 'jobs') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    Find Jobs
                   </Link>
                 </>
               )}

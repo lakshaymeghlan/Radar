@@ -9,6 +9,7 @@ import { RadarModal } from './radar-modal';
 import { MessageModal } from './message-modal';
 import { useAuth } from './auth-provider';
 import { JobCard } from './ui/job-card';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useRequireAuth } from '@/lib/hooks/use-require-auth';
 import { ApplicationModal } from './application-modal';
 
@@ -70,18 +71,24 @@ const JOB_CATEGORIES = ['All', 'Full-time', 'Part-time', 'Contract', 'Remote', '
 export function ContentExplorer({ initialNews, initialStartups, children }: ContentExplorerProps) {
   const { user } = useAuth();
   const { requireAuth } = useRequireAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const paramMode = searchParams.get('mode') as 'updates' | 'startups' | 'jobs' | null;
+
   const [mode, setMode] = useState<'updates' | 'startups' | 'jobs'>('updates');
-  const [startupSubMode, setStartupSubMode] = useState<'curated' | 'radar'>('curated');
+  const [startupSubMode, setStartupSubMode] = useState<'curated' | 'radar'>('radar');
 
   useEffect(() => {
-    if (!user) {
-      setMode('updates');
+    if (paramMode && ['updates', 'startups', 'jobs'].includes(paramMode)) {
+      setMode(paramMode);
+    } else if (!user) {
+      setMode('startups');
     } else if (user.role === 'explorer') {
       setMode('jobs');
     } else if (user.role === 'builder') {
       setMode('startups');
     }
-  }, [user]);
+  }, [user, paramMode]);
   const [radarStartups, setRadarStartups] = useState<StartupItem[]>([]);
   const [allJobs, setAllJobs] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -259,6 +266,11 @@ export function ContentExplorer({ initialNews, initialStartups, children }: Cont
     setStartupSubMode('radar');
     setDisplayCount(20);
     setActiveCategory('All');
+    
+    // Update URL without refreshing
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('mode', newMode);
+    router.push(`/?${params.toString()}#content-section`, { scroll: false });
   };
 
   const handleLoadMore = () => {
@@ -317,7 +329,7 @@ export function ContentExplorer({ initialNews, initialStartups, children }: Cont
                 {availableModes.map((m) => (
                   <button
                     key={m}
-                    onClick={() => setMode(m)}
+                    onClick={() => handleModeChange(m)}
                     className={`text-[11px] font-black uppercase tracking-[0.3em] transition-all ${
                       mode === m
                         ? 'text-emerald-500 border-b-2 border-emerald-500 pb-1'
