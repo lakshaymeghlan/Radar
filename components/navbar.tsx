@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { RefreshCw, Check, Clock, Rocket, Bell, Briefcase } from 'lucide-react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,7 +13,7 @@ import { useAuth } from './auth-provider';
 import { AuthModal } from './auth-modal';
 import { NotificationDropdown } from './notification-dropdown';
 
-export const Navbar = () => {
+const NavbarContent = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
@@ -302,5 +302,13 @@ export const Navbar = () => {
 
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
+  );
+};
+
+export const Navbar = () => {
+  return (
+    <Suspense fallback={null}>
+      <NavbarContent />
+    </Suspense>
   );
 };

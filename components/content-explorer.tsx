@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import { NewsCard } from '@/components/ui/news-card';
 import { Sparkles, LayoutGrid, Plus, Cpu, Code2, Rocket, ArrowRight, BriefcaseBusiness } from 'lucide-react';
 import WarpShaderHero from '@/components/ui/wrap-shader';
@@ -69,7 +69,7 @@ const STARTUP_CATEGORIES = [
 
 const JOB_CATEGORIES = ['All', 'Full-time', 'Part-time', 'Contract', 'Remote', 'Internship'];
 
-export function ContentExplorer({ initialNews, initialStartups, children }: ContentExplorerProps) {
+function ContentExplorerContent({ initialNews, initialStartups, children }: ContentExplorerProps) {
   const { user } = useAuth();
   const { requireAuth } = useRequireAuth();
   const router = useRouter();
@@ -584,5 +584,13 @@ export function ContentExplorer({ initialNews, initialStartups, children }: Cont
         companyName={selectedJob?.company || ""}
       />
     </>
+  );
+}
+
+export function ContentExplorer(props: ContentExplorerProps) {
+  return (
+    <Suspense fallback={null}>
+      <ContentExplorerContent {...props} />
+    </Suspense>
   );
 }
