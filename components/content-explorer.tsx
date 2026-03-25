@@ -12,6 +12,7 @@ import { JobCard } from './ui/job-card';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useRequireAuth } from '@/lib/hooks/use-require-auth';
 import { ApplicationModal } from './application-modal';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export interface NewsItem {
 // ... existing ...
@@ -330,13 +331,20 @@ export function ContentExplorer({ initialNews, initialStartups, children }: Cont
                   <button
                     key={m}
                     onClick={() => handleModeChange(m)}
-                    className={`text-[11px] font-black uppercase tracking-[0.3em] transition-all ${
+                    className={`relative px-4 py-2 text-[11px] font-black uppercase tracking-[0.3em] transition-all ${
                       mode === m
-                        ? 'text-emerald-500 border-b-2 border-emerald-500 pb-1'
+                        ? 'text-emerald-500'
                         : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    {m}
+                    <span className="relative z-10">{m}</span>
+                    {mode === m && (
+                      <motion.div
+                        layoutId="activeMode"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-500"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
                   </button>
                 ))}
                 
@@ -440,14 +448,35 @@ export function ContentExplorer({ initialNews, initialStartups, children }: Cont
         </div>
 
         <div className="min-h-[400px] flex flex-col items-center">
-          {displayedContent.length > 0 ? (
-            <>
-              <div 
+          <AnimatePresence mode="wait">
+            {displayedContent.length > 0 ? (
+              <motion.div 
+                key={mode + startupSubMode + activeCategory}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: { 
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.05
+                    }
+                  },
+                  exit: { opacity: 0, transition: { duration: 0.2 } }
+                }}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 w-full mb-24 transition-all duration-500"
                 suppressHydrationWarning
               >
                 {displayedContent.map((item) => (
-                  <div key={item.id} className="animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both">
+                  <motion.div 
+                    key={item.id} 
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 20 } }
+                    }}
+                    className="h-full"
+                  >
                     {item.type === 'job' ? (
                       <JobCard 
                         id={item.id}
@@ -479,35 +508,46 @@ export function ContentExplorer({ initialNews, initialStartups, children }: Cont
                         onMessageClick={handleMessageClick}
                       />
                     )}
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-              
-              {hasMore && (
-                <button 
-                  onClick={handleLoadMore}
-                  className="group flex items-center gap-4 px-12 py-6 bg-foreground border border-border rounded-full text-background text-xs font-black tracking-[0.2em] uppercase hover:bg-primary dark:hover:bg-emerald-500 transition-all duration-700 shadow-2xl shadow-foreground/10"
-                >
-                  <Plus className="w-4 h-4 transition-transform group-hover:rotate-180" />
-                  Scan More Signals
-                </button>
-              )}
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-40 rounded-[60px] border border-dashed border-slate-200 bg-slate-50/20 w-full animate-in fade-in duration-1000">
-              <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-8">
-                <Sparkles className="w-8 h-8 text-slate-300" />
-              </div>
-              <p className="text-slate-500 font-light text-xl mb-8">
-                No recent signals detected for <span className="text-slate-900 font-medium">{activeCategory}</span>.
-              </p>
-              <button 
-                onClick={() => setActiveCategory('All')}
-                className="px-8 py-3 bg-white border border-slate-200 rounded-full text-slate-900 text-xs font-bold tracking-widest uppercase hover:border-teal-500 hover:text-teal-600 transition-all duration-700 shadow-sm"
+              </motion.div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center justify-center py-40 rounded-[60px] border border-dashed border-slate-200 bg-slate-50/20 w-full"
               >
-                Reset Radar
-              </button>
-            </div>
+                <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-8">
+                  <Sparkles className="w-8 h-8 text-slate-300" />
+                </div>
+                <p className="text-slate-500 font-light text-xl mb-8">
+                  No recent signals detected for <span className="text-slate-900 font-medium">{activeCategory}</span>.
+                </p>
+                <button 
+                  onClick={() => setActiveCategory('All')}
+                  className="px-8 py-3 bg-white border border-slate-200 rounded-full text-slate-900 text-xs font-bold tracking-widest uppercase hover:border-teal-500 hover:text-teal-600 transition-all duration-700 shadow-sm"
+                >
+                  Reset Radar
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {hasMore && (
+            <motion.button 
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleLoadMore}
+              className="group flex items-center gap-4 px-12 py-6 bg-foreground border border-border rounded-full text-background text-xs font-black tracking-[0.2em] uppercase hover:bg-emerald-500 transition-all duration-700 shadow-2xl shadow-foreground/10 mt-20"
+            >
+              <motion.div
+                whileHover={{ rotate: 180 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+              >
+                <Plus className="w-4 h-4" />
+              </motion.div>
+              Scan More Signals
+            </motion.button>
           )}
         </div>
       </section>

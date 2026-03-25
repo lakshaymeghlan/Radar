@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { RefreshCw, Check, Clock, Rocket, Bell, Briefcase } from 'lucide-react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { RadarLogo } from './ui/radar-logo';
 
@@ -91,48 +92,88 @@ export const Navbar = () => {
                 <>
                   <Link 
                     href="/inbox" 
-                    className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                    className={`relative px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                       isActive('/inbox') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    Inbox
+                    <span className="relative z-10">Inbox</span>
+                    {isActive('/inbox') && (
+                      <motion.div
+                        layoutId="navTab"
+                        className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
                   </Link>
                   {user.role === 'builder' ? (
                     <>
                       <Link 
                         href="/profile#startups" 
-                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        className={`relative px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                           isActive('/profile', undefined, '#startups') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         }`}
                       >
-                        My Startups
+                        <span className="relative z-10">My Startups</span>
+                        {isActive('/profile', undefined, '#startups') && (
+                          <motion.div
+                            layoutId="navTab"
+                            className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full"
+                            initial={false}
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
                       </Link>
                       <Link 
                         href="/profile#applicants" 
-                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        className={`relative px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                           isActive('/profile', undefined, '#applicants') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         }`}
                       >
-                        Applicants
+                        <span className="relative z-10">Applicants</span>
+                        {isActive('/profile', undefined, '#applicants') && (
+                          <motion.div
+                            layoutId="navTab"
+                            className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full"
+                            initial={false}
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
                       </Link>
                     </>
                   ) : (
                     <>
                       <Link 
                         href="/?mode=startups#content-section" 
-                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        className={`relative px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                           isActive('/', 'startups') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         }`}
                       >
-                        Browse Startups
+                        <span className="relative z-10">Browse Startups</span>
+                        {isActive('/', 'startups') && (
+                          <motion.div
+                            layoutId="navTab"
+                            className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full"
+                            initial={false}
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
                       </Link>
                       <Link 
                         href="/?mode=jobs#content-section" 
-                        className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                        className={`relative px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                           isActive('/', 'jobs') || isActive('/') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         }`}
                       >
-                        Find Jobs
+                        <span className="relative z-10">Find Jobs</span>
+                        {(isActive('/', 'jobs') || isActive('/')) && (
+                          <motion.div
+                            layoutId="navTab"
+                            className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full"
+                            initial={false}
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
                       </Link>
                     </>
                   )}
@@ -141,19 +182,35 @@ export const Navbar = () => {
                 <>
                   <Link 
                     href="/?mode=startups#content-section" 
-                    className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                    className={`relative px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                       isActive('/', 'startups') || isActive('/') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    Browse Startups
+                    <span className="relative z-10">Browse Startups</span>
+                    {(isActive('/', 'startups') || isActive('/')) && (
+                      <motion.div
+                        layoutId="navTab"
+                        className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
                   </Link>
                   <Link 
                     href="/?mode=jobs#content-section" 
-                    className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                    className={`relative px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                       isActive('/', 'jobs') ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    Find Jobs
+                    <span className="relative z-10">Find Jobs</span>
+                    {isActive('/', 'jobs') && (
+                      <motion.div
+                        layoutId="navTab"
+                        className="absolute inset-0 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full"
+                        initial={false}
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
                   </Link>
                 </>
               )}

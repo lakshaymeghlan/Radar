@@ -52,7 +52,7 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
     }
   }, [isOpen, user]);
 
-  if (!isOpen) return null;
+  // Removing early return to let AnimatePresence handle it
 
   const handleAddLink = () => {
     setCustomLinks([...customLinks, { label: "", url: "" }]);
@@ -108,8 +108,21 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md"
+        >
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col max-h-[90vh]"
+          >
         <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50 rounded-t-[32px]">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-indigo-500">
@@ -292,7 +305,9 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
+    )}
+  </AnimatePresence>
   );
 };
