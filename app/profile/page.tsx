@@ -341,12 +341,12 @@ export default function ProfilePage() {
 
           {/* Main Content Area */}
           <div className="w-full lg:w-2/3">
-             <div className="flex flex-wrap gap-4 mb-8 p-1.5 bg-slate-100 dark:bg-slate-900/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800">
+             <div className="flex flex-wrap gap-2 sm:gap-4 mb-6 sm:mb-8 p-1 sm:p-1.5 bg-slate-100 dark:bg-slate-900/50 rounded-xl sm:rounded-2xl w-full sm:w-fit border border-slate-200 dark:border-slate-800 shadow-sm">
                <button
                  onClick={() => setActiveTab('content')}
-                 className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                 className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest transition-all ${
                    activeTab === 'content'
-                     ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl'
+                     ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-md sm:shadow-xl'
                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-emerald-400'
                  }`}
                >
@@ -355,9 +355,9 @@ export default function ProfilePage() {
                {profile?.role === 'builder' && (
                  <button
                    onClick={() => setActiveTab('applicants')}
-                   className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                   className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest transition-all ${
                      activeTab === 'applicants'
-                       ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl'
+                       ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-md sm:shadow-xl'
                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-emerald-400'
                    }`}
                  >
@@ -367,9 +367,9 @@ export default function ProfilePage() {
                {profile?.role === 'explorer' && (
                  <button
                    onClick={() => setActiveTab('my-applications')}
-                   className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                   className={`flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest transition-all ${
                      activeTab === 'my-applications'
-                       ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl'
+                       ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-md sm:shadow-xl'
                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-emerald-400'
                    }`}
                  >

@@ -302,21 +302,21 @@ function ContentExplorerContent({ initialNews, initialStartups, children }: Cont
 
       <section 
         id="content-section" 
-        className="max-w-7xl mx-auto px-6 py-24 transition-opacity duration-500"
+        className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-24 transition-opacity duration-500"
         suppressHydrationWarning
       >
-        <div className="flex flex-col space-y-16 mb-20">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
-            <div className="space-y-6">
+        <div className="flex flex-col space-y-10 sm:space-y-16 mb-12 sm:mb-20">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-10">
+            <div className="space-y-4 sm:space-y-6">
               <div className="flex items-center gap-3 text-primary dark:text-emerald-400">
-                <div className="p-2 bg-primary/5 dark:bg-emerald-500/10 rounded-xl">
-                  {mode === 'updates' ? <Rocket className="w-4 h-4" /> : (mode === 'jobs' ? <BriefcaseBusiness className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />)}
+                <div className="p-2 bg-primary/5 dark:bg-emerald-500/10 rounded-lg sm:rounded-xl">
+                  {mode === 'updates' ? <Rocket className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : (mode === 'jobs' ? <BriefcaseBusiness className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />)}
                 </div>
-                <span className="text-[12px] font-black tracking-[0.3em] uppercase tracking-widest">
+                <span className="text-[10px] sm:text-[12px] font-black tracking-[0.2em] sm:tracking-[0.3em] uppercase tracking-widest">
                   {mode === 'updates' ? 'Evolution Stream' : (mode === 'jobs' ? 'Opportunity Flow' : 'Startup Builds')}
                 </span>
               </div>
-              <h2 className="text-5xl md:text-7xl font-sans font-light text-foreground dark:text-white tracking-tighter leading-none animate-in fade-in duration-700">
+              <h2 className="text-4xl sm:text-6xl md:text-7xl font-sans font-light text-slate-950 dark:text-white tracking-tighter leading-[1.1] sm:leading-none animate-in fade-in duration-700">
                 {mode === 'updates' ? (
                   <>Recent AI <span className="font-serif italic text-primary dark:text-emerald-400 dark:text-glow">Updates</span></>
                 ) : mode === 'jobs' ? (
@@ -326,12 +326,12 @@ function ContentExplorerContent({ initialNews, initialStartups, children }: Cont
                 )}
               </h2>
               
-              <div className="flex items-center gap-6">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                 {availableModes.map((m) => (
                   <button
                     key={m}
                     onClick={() => handleModeChange(m)}
-                    className={`relative px-4 py-2 text-[11px] font-black uppercase tracking-[0.3em] transition-all ${
+                    className={`relative px-3 sm:px-4 py-2 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] transition-all ${
                       mode === m
                         ? 'text-emerald-500'
                         : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -349,23 +349,23 @@ function ContentExplorerContent({ initialNews, initialStartups, children }: Cont
                 ))}
                 
                 {user?.role === 'builder' && (
-                  <div className="flex items-center gap-3 px-4 py-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
-                      {radarStartups.some(s => (s as any).founderId === user?.id) ? `${Math.floor(Math.random() * 50) + 12} interactions today` : "Post your first startup to see views"}
+                  <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-500/5 border border-emerald-500/10 rounded-lg sm:rounded-xl">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[9px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                      {radarStartups.some(s => (s as any).founderId === user?.id) ? `${Math.floor(Math.random() * 50) + 12} views` : "Post startup"}
                     </span>
                   </div>
                 )}
               </div>
 
               {mode === 'startups' && (
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-3 p-1 bg-slate-100 dark:bg-slate-900/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                  <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-900/50 rounded-xl sm:rounded-2xl w-fit border border-slate-200 dark:border-slate-800">
                     <button
                       onClick={() => setStartupSubMode('curated')}
-                      className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                      className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest transition-all ${
                         startupSubMode === 'curated'
-                          ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl'
+                          ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-lg sm:shadow-xl'
                           : 'text-slate-500 hover:text-slate-900 dark:hover:text-emerald-400'
                       }`}
                     >
@@ -373,9 +373,9 @@ function ContentExplorerContent({ initialNews, initialStartups, children }: Cont
                     </button>
                     <button
                       onClick={() => setStartupSubMode('radar')}
-                      className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                      className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest transition-all ${
                         startupSubMode === 'radar'
-                          ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-xl'
+                          ? 'bg-white dark:bg-emerald-500 text-slate-900 dark:text-white shadow-lg sm:shadow-xl'
                           : 'text-slate-500 hover:text-slate-900 dark:hover:text-emerald-400'
                       }`}
                     >
@@ -386,33 +386,33 @@ function ContentExplorerContent({ initialNews, initialStartups, children }: Cont
                   {startupSubMode === 'radar' && (
                     <button
                       onClick={() => requireAuth(() => setIsRadarModalOpen(true))}
-                      className="group flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/20"
+                      className="group flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/20"
                     >
-                      <Plus className="w-4 h-4" />
-                      List Your Startup
+                      <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      List Startup
                     </button>
                   )}
                 </div>
               )}
 
-              <div className="flex items-center gap-6 pt-2">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Code2 className="w-4 h-4" />
-                  <span className="text-xs font-medium uppercase tracking-widest">Coding</span>
+                  <Code2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="text-[10px] sm:text-xs font-medium uppercase tracking-widest">Coding</span>
                 </div>
-                <div className="w-1 h-1 rounded-full bg-border" />
+                <div className="w-1 h-1 rounded-full bg-border hidden sm:block" />
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Cpu className="w-4 h-4" />
-                  <span className="text-xs font-medium uppercase tracking-widest">Agents</span>
+                  <Cpu className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="text-[10px] sm:text-xs font-medium uppercase tracking-widest">Agents</span>
                 </div>
-                <div className="w-1 h-1 rounded-full bg-border" />
+                <div className="w-1 h-1 rounded-full bg-border hidden sm:block" />
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Rocket className="w-4 h-4" />
-                  <span className="text-xs font-medium uppercase tracking-widest">Launches</span>
+                  <Rocket className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="text-[10px] sm:text-xs font-medium uppercase tracking-widest">Launches</span>
                 </div>
               </div>
             </div>
-            <p className="text-muted-foreground text-sm font-light max-w-xs md:text-right leading-relaxed border-l-2 border-border pl-6 md:border-l-0 md:pl-0">
+            <p className="text-muted-foreground text-xs sm:text-sm font-light max-w-xs md:text-right leading-relaxed border-l-2 border-border pl-4 sm:pl-6 md:border-l-0 md:pl-0">
               {mode === 'updates' 
                 ? 'A real-time signal tracker covering the last 7 days of agentic AI, coding assistants, and frontier tech.'
                 : startupSubMode === 'curated'
@@ -422,27 +422,29 @@ function ContentExplorerContent({ initialNews, initialStartups, children }: Cont
           </div>
           
           <div className="w-full animate-in fade-in slide-in-from-left-4 duration-700">
-            <div className="flex flex-wrap gap-3 items-center justify-start py-2 border-y border-border/50">
-              <div className="flex items-center gap-2 mr-6 text-muted-foreground">
-                <LayoutGrid className="w-4 h-4" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Signal Source:</span>
+            <div className="flex flex-wrap gap-2 sm:gap-3 items-center justify-start py-2 border-y border-border/50">
+              <div className="flex items-center gap-2 mr-4 sm:mr-6 text-muted-foreground">
+                <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest whitespace-nowrap">Signal Source:</span>
               </div>
-              {currentCategories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => {
-                    setActiveCategory(category);
-                    setDisplayCount(20);
-                  }}
-                  className={`px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all duration-700 border ${
-                    activeCategory === category
-                      ? 'bg-foreground dark:bg-primary text-background dark:text-primary-foreground border-foreground dark:border-primary shadow-[0_15px_30px_-10px_rgba(0,0,0,0.3)] dark:shadow-emerald-500/40 scale-105 dark:text-glow'
-                      : 'bg-background dark:bg-slate-900/40 text-muted-foreground border-border/50 hover:border-border hover:text-foreground hover:bg-secondary/50 transition-colors'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                {currentCategories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      setActiveCategory(category);
+                      setDisplayCount(20);
+                    }}
+                    className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition-all duration-700 border ${
+                      activeCategory === category
+                        ? 'bg-foreground dark:bg-primary text-background dark:text-primary-foreground border-foreground dark:border-primary shadow-[0_15px_30px_-10px_rgba(0,0,0,0.3)] dark:shadow-emerald-500/40 scale-105 dark:text-glow'
+                        : 'bg-background dark:bg-slate-900/40 text-muted-foreground border-border/50 hover:border-border hover:text-foreground hover:bg-secondary/50 transition-colors'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

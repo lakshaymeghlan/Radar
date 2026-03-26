@@ -29,31 +29,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="relative w-full max-w-md p-10 bg-white dark:bg-slate-900 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-md p-6 sm:p-10 bg-white dark:bg-slate-900 rounded-[32px] sm:rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300">
         <button 
           onClick={onClose}
-          className="absolute top-8 right-8 p-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+          className="absolute top-6 right-6 sm:top-8 sm:right-8 p-2 sm:p-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="mb-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-slate-950 dark:bg-emerald-500 flex items-center justify-center text-white text-3xl mx-auto mb-8 shadow-2xl">
+        <div className="mb-8 sm:mb-12 text-center">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-slate-950 dark:bg-emerald-500 flex items-center justify-center text-white text-2xl sm:text-3xl mx-auto mb-6 sm:mb-8 shadow-2xl">
             B
           </div>
-          <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-4 tracking-tight leading-none">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4 tracking-tight leading-none">
             Claim Your Identity
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-lg font-light">
+          <p className="text-slate-500 dark:text-slate-400 text-base sm:text-lg font-light">
             Join the ecosystem of India&apos;s <span className="text-slate-900 dark:text-white font-medium">early-stage builders.</span>
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <button
             onClick={() => handleOAuthLogin("google")}
             disabled={!!loadingProvider}
-            className="w-full py-4 px-6 bg-white dark:bg-slate-950 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-bold flex items-center justify-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm group"
+            className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-white dark:bg-slate-950 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-xl sm:rounded-2xl font-bold flex items-center justify-center gap-3 sm:gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm group text-sm sm:text-base"
           >
             {loadingProvider === "google" ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -66,7 +66,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           <button
             onClick={() => handleOAuthLogin("linkedin")}
             disabled={!!loadingProvider}
-            className="w-full py-4 px-6 bg-[#0077b5] text-white rounded-2xl font-bold flex items-center justify-center gap-4 hover:opacity-90 transition-all shadow-lg shadow-[#0077b5]/10 group"
+            className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-[#0077b5] text-white rounded-xl sm:rounded-2xl font-bold flex items-center justify-center gap-3 sm:gap-4 hover:opacity-90 transition-all shadow-lg shadow-[#0077b5]/10 group text-sm sm:text-base"
           >
             {loadingProvider === "linkedin" ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -79,7 +79,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           <button
             onClick={() => handleOAuthLogin("github")}
             disabled={!!loadingProvider}
-            className="w-full py-4 px-6 bg-slate-900 dark:border dark:border-slate-800 text-white rounded-2xl font-bold flex items-center justify-center gap-4 hover:bg-slate-800 transition-all shadow-lg group"
+            className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-slate-900 dark:border dark:border-slate-800 text-white rounded-xl sm:rounded-2xl font-bold flex items-center justify-center gap-3 sm:gap-4 hover:bg-slate-800 transition-all shadow-lg group text-sm sm:text-base"
           >
             {loadingProvider === "github" ? (
               <Loader2 className="w-5 h-5 animate-spin" />

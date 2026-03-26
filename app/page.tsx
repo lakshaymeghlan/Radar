@@ -88,8 +88,8 @@ export default async function Home() {
         <LandingContent />
       </ContentExplorer>
 
-      <footer className="border-t border-border py-20 bg-secondary/10 transition-colors duration-500">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+      <footer className="border-t border-border py-10 sm:py-20 bg-secondary/10 transition-colors duration-500">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 sm:gap-12">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-foreground text-background flex items-center justify-center font-bold text-xl">
               B
@@ -97,15 +97,15 @@ export default async function Home() {
             <span className="text-foreground font-bold text-2xl tracking-tighter">Builds</span>
           </div>
           
-          <div className="flex gap-12 text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black items-center">
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-12 text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-[0.2em] sm:tracking-[0.3em] font-black items-center">
             <a href="#" className="hover:text-primary transition-colors">Twitter</a>
             <a href="#" className="hover:text-primary transition-colors">LinkedIn</a>
             <a href="#" className="hover:text-primary transition-colors">GitHub</a>
           </div>
 
-          <p className="text-muted-foreground text-xs font-light tracking-tight text-center md:text-right">
+          <p className="text-muted-foreground text-[10px] sm:text-xs font-light tracking-tight text-center md:text-right">
             The home for early-stage builders. <br />
-            <span className="text-foreground font-serif italic text-lg mt-2 inline-block">Lakshay meghlan</span>
+            <span className="text-foreground font-serif italic text-base sm:text-lg mt-2 inline-block">Lakshay meghlan</span>
           </p>
         </div>
       </footer>
