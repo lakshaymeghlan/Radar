@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { RefreshCw, Check, Clock, Twitter, Linkedin, Github, Heart } from 'lucide-react';
+import { RefreshCw, Check, Clock, Twitter, Linkedin, Github } from 'lucide-react';
+import { BrandLogo } from './ui/brand-logo';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
@@ -44,9 +45,7 @@ export const Footer = () => {
           {/* Brand Section */}
           <div className="md:col-span-2 space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-xl shadow-lg">
-                B
-              </div>
+              <BrandLogo />
               <span className="text-2xl font-black tracking-tighter text-slate-950 dark:text-white">Builds</span>
             </div>
             <p className="max-w-xs text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed">
@@ -120,8 +119,9 @@ export const Footer = () => {
 
         {/* Footer Bottom */}
         <div className="pt-12 border-t border-slate-100 dark:border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-[11px] font-bold uppercase tracking-widest">
-            by
+          <div className="flex items-center gap-3 text-slate-400 dark:text-slate-500 text-[11px] font-bold uppercase tracking-widest">
+            <BrandLogo className="w-6 h-6 rounded-lg" textClassName="text-[10px]" />
+            <span>by</span>
             <span className="text-slate-900 dark:text-white italic font-serif text-sm ml-1">Lakshay Meghlan</span>
           </div>
 

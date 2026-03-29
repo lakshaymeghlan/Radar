@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { RadarLogo } from "./ui/radar-logo";
+import { BrandLogo } from "./ui/brand-logo";
 import { X, Send, Sparkles, Loader2, Bot, User, Rocket, Briefcase, ArrowRight, ExternalLink, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -185,7 +185,7 @@ export default function AiAssistant() {
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 shadow-lg text-white">
-                   <RadarLogo className="w-5 h-5" color="white" />
+                   <BrandLogo className="w-10 h-10" textClassName="text-xl" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight uppercase">Builds AI Assistant</h3>
@@ -267,9 +267,7 @@ export default function AiAssistant() {
                       className={`flex items-end gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                       >
                       {msg.role === "agent" && (
-                          <div className="w-6 h-6 rounded-full bg-slate-900 flex items-center justify-center text-white shrink-0 mb-1">
-                              <RadarLogo className="w-3 h-3" color="white" />
-                          </div>
+                          <BrandLogo className="w-6 h-6 rounded-lg mb-1" textClassName="text-[12px]" />
                       )}
                       <div 
                           className={`max-w-[85%] px-4 py-3 rounded-2xl text-[14px] leading-relaxed shadow-sm ${
@@ -313,9 +311,7 @@ export default function AiAssistant() {
                       animate={{ opacity: 1, scale: 1 }}
                       className="flex items-end gap-2 justify-start"
                       >
-                          <div className="w-6 h-6 rounded-full bg-slate-900 flex items-center justify-center text-white shrink-0 mb-1">
-                              <RadarLogo className="w-3 h-3" color="white" />
-                          </div>
+                          <BrandLogo className="w-6 h-6 rounded-lg mb-1" textClassName="text-[12px]" />
                           <div className="px-4 py-3 rounded-2xl rounded-bl-none bg-white border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
                              <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
                           </div>
@@ -381,7 +377,7 @@ export default function AiAssistant() {
           <X className="h-6 w-6" />
         ) : (
           <>
-            <RadarLogo className="h-7 w-7" color="white" />
+            <BrandLogo />
             <Sparkles className="absolute -right-2 -top-2 h-6 w-6 animate-pulse text-yellow-300" />
             
             <div className="absolute right-20 hidden flex-col items-end gap-1 group-hover:flex animate-in fade-in slide-in-from-right-4">
