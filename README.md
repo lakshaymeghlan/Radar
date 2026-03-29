@@ -1,6 +1,8 @@
 # Builds: Bridging Ideas and Impact
 
-![Builds Logo](e:/startup projects/ai-launch-radar/public/og-image.png)
+<div align="center">
+  <img src="./public/logo.png" alt="Builds Logo" width="120" />
+</div>
 
 > **Builds** is an elite, AI-powered launchpad where visionaries turn coffee into code. We bridge the gap between frontier technology and human collaborative innovation, providing a high-signal platform for early-stage builders to launch, find talent, and scale with community-driven momentum.
 
