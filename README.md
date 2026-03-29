@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Builds: Bridging Ideas and Impact
 
-## Getting Started
+![Builds Logo](e:/startup projects/ai-launch-radar/public/og-image.png)
 
-First, run the development server:
+> **Builds** is an elite, AI-powered launchpad where visionaries turn coffee into code. We bridge the gap between frontier technology and human collaborative innovation, providing a high-signal platform for early-stage builders to launch, find talent, and scale with community-driven momentum.
+
+---
+
+## 💎 The Premium Builder Experience
+
+Builds isn't just a directory; it's a living ecosystem designed for the modern developer and founder.
+
+### ✨ Core Features
+
+-   🤖 **Builds AI Assistant**: A sophisticated agentic assistant to discover startups, post jobs, and search the ecosystem registry with natural language.
+-   🚀 **The Builder Portal**: Launch your MVP, gather high-signal community feedback, and find your first hires in a dedicated ecosystem.
+-   🔭 **Explorer Mode**: Discover stealth startups and curated AI/Tech updates before they hit mainstream headlines.
+-   ⚡ **Platform Sync**: Real-time signal tracking for agentic AI, coding assistants, and frontier tech updates (with manual/cron override).
+-   🌊 **Effortless UX**: Inertial smooth scrolling powered by Lenis and motion-driven reveals for a "liquid" platform feel.
+
+---
+
+## 🏗️ Technical Architecture
+
+Built for scale, speed, and aesthetics. Our stack reflects the quality of the projects we host.
+
+| Component | Technology |
+| :--- | :--- |
+| **Frontend** | [Next.js 16](https://nextjs.org/) (App Router), [React 19](https://react.dev/) |
+| **Styling** | [Tailwind CSS 4](https://tailwindcss.com/), [Shadcn UI](https://ui.shadcn.com/) |
+| **Animation** | [Framer Motion](https://www.framer.com/motion/), [Lenis](https://lenis.darkroom.engineering/) |
+| **Server** | [Next.js Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) |
+| **Database** | [MongoDB](https://www.mongodb.com/) with native aggregation |
+| **Auth** | [NextAuth.js](https://next-auth.js.org/) (Google, GitHub, Auth0) |
+| **Shaders** | [Paper Design Shaders](https://github.com/paper-design/shaders-react) |
+| **Icons** | [Lucide React](https://lucide.dev/) |
+
+---
+
+## 🚀 Getting Started
+
+Ensure you have [Node.js 20+](https://nodejs.org/) and a MongoDB instance ready.
+
+### 1. Installation
+
+```bash
+git clone https://github.com/lakshaymeghlan/Builds.git
+cd Builds
+npm install
+```
+
+### 2. Environment Setup
+
+Create a `.env.local` file with the following keys:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+NEXTAUTH_SECRET=your_auth_secret
+NEXTAUTH_URL=http://localhost:3000
+
+# Social Auth
+AUTH_GOOGLE_ID=...
+AUTH_GOOGLE_SECRET=...
+
+# AI Signal Sources (Optional)
+AI_NEWS_RSS=...
+```
+
+### 3. Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` to enter the ecosystem.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Contribution
 
-## Learn More
+We welcome contributions from builders! If you have a feature idea or found a bug, feel free to open a PR.
 
-To learn more about Next.js, take a look at the following resources:
+1. Fork the repo.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 License
 
-## Deploy on Vercel
+Distributed under the MIT License. See `LICENSE` for more information.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<div align="center">
+  <p>Built with ❤️ by <b>Lakshay Meghlan</b></p>
+  <p><i>Founder & Lead Engineer</i></p>
+</div>
