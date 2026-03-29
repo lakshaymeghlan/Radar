@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect, Suspense } from 'react';
-import { RefreshCw, Check, Clock, Rocket, Bell, Briefcase, Menu, X } from 'lucide-react';
+import { Rocket, Bell, Briefcase, Menu, X, ExternalLink } from 'lucide-react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,9 +14,6 @@ import { AuthModal } from './auth-modal';
 import { NotificationDropdown } from './notification-dropdown';
 
 const NavbarContent = () => {
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [isDone, setIsDone] = useState(false);
-  const [lastSync, setLastSync] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -53,31 +50,11 @@ const NavbarContent = () => {
   };
 
   useEffect(() => {
-    setLastSync(new Date().toLocaleTimeString());
-
     const openModal = () => setIsAuthModalOpen(true);
     window.addEventListener("open-auth-modal", openModal);
     return () => window.removeEventListener("open-auth-modal", openModal);
   }, []);
 
-  const handleSync = async () => {
-    setIsSyncing(true);
-    setIsDone(false);
-    try {
-      await fetch('/api/fetch-news');
-      await fetch('/api/fetch-startups');
-      setIsDone(true);
-      setLastSync(new Date().toLocaleTimeString());
-      setTimeout(() => {
-        setIsDone(false);
-        router.refresh();
-      }, 2000);
-    } catch (error) {
-      console.error('Sync failed:', error);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   const navLinks = user ? (
     <>
@@ -168,6 +145,35 @@ const NavbarContent = () => {
           </Link>
         </>
       )}
+      <motion.a 
+        href="https://build-what.vercel.app/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+        className="group relative flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/50 dark:bg-sky-950/10 border border-[#009ED1]/20 hover:border-[#009ED1]/50 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-all duration-300 shadow-[0_2px_10px_-4px_rgba(0,158,209,0.2)] hover:shadow-[0_8px_20px_-8px_rgba(0,158,209,0.4)]"
+      >
+        <div className="relative flex items-center gap-2">
+          <div className="w-6 h-6 rounded-[8px] bg-gradient-to-br from-[#009ED1] to-[#0088B5] flex items-center justify-center text-white shadow-[0_4px_12px_rgba(0,158,209,0.4)] group-hover:rotate-12 transition-transform duration-500">
+            <span className="text-[11px] font-black">B</span>
+          </div>
+          
+          <span className="flex items-center text-[11px] font-black tracking-widest leading-none">
+            <span className="text-slate-900 dark:text-white">BUILD</span>
+            <span className="bg-gradient-to-r from-[#009ED1] to-sky-400 bg-clip-text text-transparent">WHAT</span>
+          </span>
+          
+          <ExternalLink className="w-2.5 h-2.5 text-[#009ED1] opacity-40 group-hover:opacity-100 transition-opacity" />
+        </div>
+
+        {/* Premium Badge */}
+        <div className="absolute -top-2.5 -right-1.5 px-1.5 py-0.5 rounded-md bg-gradient-to-r from-[#009ED1] to-sky-400 text-[8px] font-black text-white shadow-lg shadow-sky-200 dark:shadow-none animate-bounce scale-90 group-hover:scale-100 transition-transform">
+          NEW
+        </div>
+
+        {/* Ambient Glow */}
+        <div className="absolute inset-0 rounded-full bg-[#009ED1]/5 opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-500" />
+      </motion.a>
     </>
   ) : (
     <>
@@ -203,6 +209,35 @@ const NavbarContent = () => {
           />
         )}
       </Link>
+      <motion.a 
+        href="https://build-what.vercel.app/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+        className="group relative flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/50 dark:bg-sky-950/10 border border-[#009ED1]/20 hover:border-[#009ED1]/50 hover:bg-sky-50 dark:hover:bg-sky-900/20 transition-all duration-300 shadow-[0_2px_10px_-4px_rgba(0,158,209,0.2)] hover:shadow-[0_8px_20px_-8px_rgba(0,158,209,0.4)]"
+      >
+        <div className="relative flex items-center gap-2">
+          <div className="w-6 h-6 rounded-[8px] bg-gradient-to-br from-[#009ED1] to-[#0088B5] flex items-center justify-center text-white shadow-[0_4px_12px_rgba(0,158,209,0.4)] group-hover:rotate-12 transition-transform duration-500">
+            <span className="text-[11px] font-black">B</span>
+          </div>
+          
+          <span className="flex items-center text-[11px] font-black tracking-widest leading-none">
+            <span className="text-slate-900 dark:text-white">BUILD</span>
+            <span className="bg-gradient-to-r from-[#009ED1] to-sky-400 bg-clip-text text-transparent">WHAT</span>
+          </span>
+          
+          <ExternalLink className="w-2.5 h-2.5 text-[#009ED1] opacity-40 group-hover:opacity-100 transition-opacity" />
+        </div>
+
+        {/* Premium Badge */}
+        <div className="absolute -top-2.5 -right-1.5 px-1.5 py-0.5 rounded-md bg-gradient-to-r from-[#009ED1] to-sky-400 text-[8px] font-black text-white shadow-lg shadow-sky-200 dark:shadow-none animate-bounce scale-90 group-hover:scale-100 transition-transform">
+          NEW
+        </div>
+
+        {/* Ambient Glow */}
+        <div className="absolute inset-0 rounded-full bg-[#009ED1]/5 opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-500" />
+      </motion.a>
     </>
   );
 
@@ -233,42 +268,6 @@ const NavbarContent = () => {
               <ThemeToggle />
             </div>
             
-            {lastSync && (
-              <div className="hidden lg:flex items-center gap-2 text-slate-400 dark:text-slate-500">
-                <Clock className="w-3 h-3" />
-                <span className="text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">Last Sync: {lastSync}</span>
-              </div>
-            )}
-            
-            <button 
-              onClick={handleSync}
-              disabled={isSyncing}
-              className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-widest transition-all duration-500 ${
-                isDone 
-                  ? 'bg-teal-500 text-white shadow-teal-200 shadow-lg' 
-                  : 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-200'
-              } disabled:opacity-50`}
-            >
-              {isSyncing ? (
-                <>
-                  <RefreshCw className="w-3 h-3 animate-spin" />
-                  <span className="hidden sm:inline">Syncing...</span>
-                  <span className="sm:hidden">...</span>
-                </>
-              ) : isDone ? (
-                <>
-                  <Check className="w-3 h-3" />
-                  <span className="hidden sm:inline">Updated</span>
-                  <span className="sm:hidden">Done</span>
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="w-3 h-3" />
-                  <span className="hidden sm:inline">Update</span>
-                  <span className="sm:hidden">Sync</span>
-                </>
-              )}
-            </button>
 
             <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 hidden sm:block" />
 
@@ -386,6 +385,40 @@ const NavbarContent = () => {
                       </Link>
                     </>
                   )}
+                  
+                    {/* Separate section for External Apps */}
+                  <div className="mt-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center justify-between mb-4 px-2">
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Builds Ecosystem</span>
+                       <div className="px-2 py-0.5 rounded-full bg-sky-500 text-[8px] font-bold text-white tracking-widest animate-pulse">LIVE</div>
+                    </div>
+                    <motion.a 
+                      href="https://build-what.vercel.app/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      whileTap={{ scale: 0.98 }}
+                      className="group p-5 rounded-3xl bg-gradient-to-br from-white to-sky-50 dark:from-slate-900 dark:to-sky-950/20 border-2 border-sky-100 dark:border-sky-500/10 transition-all flex items-center justify-between shadow-[0_10px_30px_-15px_rgba(0,158,209,0.2)] active:shadow-inner"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#009ED1] to-[#0088B5] flex items-center justify-center text-white shadow-lg shadow-sky-200 dark:shadow-none transition-transform group-hover:rotate-12">
+                            <Rocket className="w-6 h-6" />
+                          </div>
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#009ED1] rounded-full border-2 border-white dark:border-slate-900 animate-pulse" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-base font-black uppercase tracking-widest text-slate-900 dark:text-white">BUILD</span>
+                            <span className="text-base font-black uppercase tracking-widest text-[#009ED1]">WHAT</span>
+                          </div>
+                          <p className="text-xs text-slate-500 dark:text-sky-400/60 font-medium">Real-world Problem Discovery</p>
+                        </div>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500/10 flex items-center justify-center">
+                        <ExternalLink className="w-5 h-5 text-[#009ED1]" />
+                      </div>
+                    </motion.a>
+                  </div>
                 </div>
               </div>
             </motion.div>

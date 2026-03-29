@@ -188,7 +188,7 @@ export default function AiAssistant() {
                    <RadarLogo className="w-5 h-5" color="white" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight uppercase">Radar AI Agent</h3>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight uppercase">Builds AI Assistant</h3>
                   <div className="flex items-center gap-1.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></span>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Online</span>
@@ -386,7 +386,7 @@ export default function AiAssistant() {
             
             <div className="absolute right-20 hidden flex-col items-end gap-1 group-hover:flex animate-in fade-in slide-in-from-right-4">
                <div className="whitespace-nowrap rounded-xl bg-slate-900 px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white shadow-2xl">
-                 Radar AI Agent
+                 Builds AI Assistant
                </div>
             </div>
           </>

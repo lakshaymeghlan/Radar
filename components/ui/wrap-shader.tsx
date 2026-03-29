@@ -14,8 +14,16 @@ interface WarpShaderHeroProps {
 export default function WarpShaderHero({ onModeChange, activeMode = 'updates', userRole }: WarpShaderHeroProps) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isInView, setIsInView] = useState(true);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    const handleScroll = () => {
+      setIsInView(window.scrollY < window.innerHeight);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToContent = () => {
     document.getElementById('content-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -28,24 +36,26 @@ export default function WarpShaderHero({ onModeChange, activeMode = 'updates', u
 
   return (
     <div 
-      className="relative min-h-screen w-full overflow-hidden transition-colors duration-700 bg-background"
+      className="relative min-h-screen w-full overflow-hidden transition-colors duration-700 bg-background gpu-accelerated"
       suppressHydrationWarning
     >
       <div className="absolute inset-0">
-        <Warp
-          style={{ height: "100%", width: "100%" }}
-          proportion={0.4}
-          softness={0.9}
-          distortion={0.3}
-          swirl={1.2}
-          swirlIterations={12}
-          shape="checks"
-          shapeScale={0.08}
-          scale={1}
-          rotation={0}
-          speed={1} // ALWAYS MOVING
-          colors={colors}
-        />
+        {isInView && (
+          <Warp
+            style={{ height: "100%", width: "100%" }}
+            proportion={0.4}
+            softness={0.9}
+            distortion={0.3}
+            swirl={1.2}
+            swirlIterations={12}
+            shape="checks"
+            shapeScale={0.08}
+            scale={1}
+            rotation={0}
+            speed={1} // ALWAYS MOVING
+            colors={colors}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background dark:to-background" />
       </div>
 

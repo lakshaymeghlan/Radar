@@ -1,0 +1,44 @@
+# RADAR PHASE 5: PROGRESS REPORT & VISION (REPOSITIONING & PERFORMANCE)
+Date: March 24, 2026
+
+## 1. CORE OBJECTIVES ACHIEVED TODAY
+Today's focus was on transforming "Radar" into **Builds**, a role-aware startup ecosystem with a high-performance landing experience and frictionless user onboarding.
+
+### A. STRATEGIC REPOSITIONING (BUILDS V1)
+- **Brand Evolution**: Formally transitioned the platform from *AI Discovery* to **Builds — The home for early-stage builders.**
+- **Role-Based Experience**: 
+  - **Guests**: Default to AI Updates first to show value immediately.
+  - **Explorers**: Automatically land on **Jobs** to find opportunities without friction.
+  - **Builders**: Automatically land on **Startups** to manage their ecosystem visibility.
+- **Dynamic Hero UI**: The landing page now morphs its headline, buttons, and CTAs (e.g., "Post Startup" vs "Find Jobs") based on the user's active role.
+
+### B. PERFORMANCE & UX CLARITY
+- **Shader Optimization**: Implemented a scroll-aware **Intersection Observer** for the background shader. The animation now pauses (speed = 0) when the user scrolls away from the Hero, dramatically reducing browser lag and GPU usage.
+- **Premium Hero UI**: 
+  - Refined button designs to be smaller, more elegant, and production-ready.
+  - Added text-shadows and contrast-masks for pixel-perfect readability in both light and dark modes against the moving background.
+- **Onboarding 2.0**: Redesigned the Google/OAuth signup flow to ensure a "Builder vs Explorer" choice is made immediately, linking the user's identity to their platform experience from second one.
+
+### C. DUAL-IDENTITY & ARCHITECTURE
+- **The "Switch View" Toggle**: Introduced a role-switcher on the User Profile page. This allows a single user to handle two profiles simultaneously—switching between "Founder" and "Talent" views without needing multiple accounts.
+- **Auth Standardization**: Fully migrated custom authentication routes to **NextAuth.js** with MongoDB Adapter, resolving `OAuthAccountNotLinked` errors and fixing missing profile avatars (Google pictures).
+- **Builder Analytics**: Added a "Views & Interactions" widget for Builders in the main feed, providing immediate feedback on their startup's platform performance.
+
+---
+
+## 2. THE FUTURE VISION: FROM COMMUNITY TO CO-FOUNDER SEARCH
+
+Builds is evolving from a mere feed into a **startup operating system**:
+1.  **SIGNAL** (Phase 1-2): Spotting launches.
+2.  **IDENTITY** (Phase 3-4): Connecting founders.
+3.  **ECOSYSTEM** (Phase 5): Role-aware environments (Today's progress).
+4.  **CO-FOUNDER MATCHING** (Upcoming): Using AI to intelligently surface co-founders and early-stage hires based on project synergy.
+
+---
+
+## 3. TECHNICAL NOTES
+- **Framework**: Next.js 15 (App Router)
+- **Authentication**: NextAuth.js (Standardized session & Google OAuth)
+- **Performance**: Intersection Observer API for Scroll-Optimization
+- **Database**: MongoDB (Role-keyed users + Startup tracking)
+- **UI Engine**: @paper-design/shaders-react + Framer Motion

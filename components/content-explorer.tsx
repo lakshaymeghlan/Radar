@@ -300,8 +300,12 @@ function ContentExplorerContent({ initialNews, initialStartups, children }: Cont
     <>
       <WarpShaderHero onModeChange={handleModeChange} activeMode={mode} userRole={user?.role} />
 
-      <section 
+      <motion.section 
         id="content-section" 
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-24 transition-opacity duration-500"
         suppressHydrationWarning
       >
@@ -552,7 +556,7 @@ function ContentExplorerContent({ initialNews, initialStartups, children }: Cont
             </motion.button>
           )}
         </div>
-      </section>
+      </motion.section>
 
       {children}
 
